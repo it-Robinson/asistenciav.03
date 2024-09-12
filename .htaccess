@@ -1,0 +1,6 @@
+RewriteEngine On
+
+# Regla para ocultar la extensión .php en toda la raíz
+RewriteCond %{REQUEST_FILENAME} !-d
+RewriteCond %{REQUEST_FILENAME}.php -f
+RewriteRule ^(.*)$ $1.php [L,QSA]

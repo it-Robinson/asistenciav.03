@@ -1,0 +1,91 @@
+/* styles.css */
+
+body {
+    font-family: 'Roboto', sans-serif; /* Cambiado a Roboto */
+    line-height: 1.6;
+    margin: 0;
+    padding: 0;
+    background-color: #f4f4f4;
+    color: #333;
+    font-size: 1.3em; /* Tamaño general del texto */
+}
+
+
+
+header h1 {
+    margin: 0;
+    font-size: 2.5em;
+    font-weight: 700;
+}
+
+main {
+    margin: 20px auto;
+    max-width: 1200px;
+    padding: 20px;
+    font-size: inherit; /* Hereda el tamaño de fuente del body */
+}
+
+main section {
+    background: #ffffff;
+    border-radius: 10px;
+    margin-bottom: 20px;
+    box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+    font-size: inherit; /* Hereda el tamaño de fuente del main */
+}
+
+main section h2 {
+    color: #2c3e50;
+    font-size: 1em;
+    font-weight: 700;
+    border-bottom: 2px solid #1abc9c;
+    padding: 10px;
+    margin: 0;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+}
+
+main section .content {
+    padding: 20px;
+    display: none;
+    font-size: inherit; /* Hereda el tamaño de fuente de la sección */
+}
+
+.styled-list {
+    list-style-type: none; /* Quitamos el tipo de lista predeterminado */
+    padding-left: 20px;
+    font-size: inherit; /* Hereda el tamaño de fuente del contenedor */
+}
+
+.styled-list li::before {
+    content: '•';
+    color: black; /* Cambia el color si es necesario */
+    display: inline-block; 
+    width: 1em; /* Asegura un espacio entre el punto y el texto */
+    margin-left: -1em; /* Ajusta la posición del punto */
+    font-size: inherit; /* Hereda el tamaño de fuente del contenedor */
+}
+
+.styled-list li {
+    margin-bottom: 10px;
+    font-size: inherit; /* Hereda el tamaño de fuente del contenedor */
+}
+
+
+
+footer h2 {
+    margin: 0 0 10px 0;
+    font-weight: 700;
+    font-size: 1.5em;
+}
+
+p, ul {
+    margin-bottom: 10px;
+    font-size: inherit; /* Hereda el tamaño de fuente del contenedor */
+}
+
+
+
+i {
+    margin-right: 10px;
+}

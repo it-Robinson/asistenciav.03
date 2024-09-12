@@ -1,0 +1,57 @@
+.popup {
+    display: none;
+    position: fixed;
+    z-index: 100;
+    left: 50%;
+    top: 50%;
+    transform: translate(-50%, -50%);
+    width: 90%; /* Aumentamos el ancho para que ocupe más espacio */
+    max-width: 600px; /* Incrementamos el ancho máximo */
+    background-color: rgba(255, 255, 255, 0.95); /* Fondo ligeramente más opaco para mejor visibilidad */
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3); /* Sombra más pronunciada */
+    border-radius: 15px; /* Esquinas más redondeadas */
+    text-align: center;
+    padding: 30px; /* Mayor espacio interno */
+    animation: fadeIn 0.5s;
+    border: 3px solid #f3b431; /* Añadimos un borde con color amarillo similar al del menú */
+}
+
+.popup-content h2 {
+    margin-top: 0;
+    color: #f3b431; /* Cambiamos el color del texto del título para que coincida con el borde */
+    font-size: 2em; /* Hacemos el título más grande */
+}
+
+.popup-content p {
+    font-size: 1.4em; /* Aumentamos el tamaño del texto */
+    color: #333; /* Mantenemos el color */
+    line-height: 1.6; /* Mejora la legibilidad */
+}
+
+.close {
+    position: absolute;
+    top: -20px; /* Ajustamos la posición del botón de cierre */
+    right: 10px; /* Ajustamos la posición del botón de cierre */
+    font-size: 80px; /* Hacemos el botón de cierre mucho más grande */
+    cursor: pointer;
+    color: #f3b431; /* Hacemos que el color coincida con el esquema de color */
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+    to {
+        opacity: 1;
+    }
+}
+
+canvas#fireworks {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 99;
+    pointer-events: none;
+}
