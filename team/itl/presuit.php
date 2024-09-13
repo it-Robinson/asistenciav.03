@@ -278,7 +278,8 @@ try {
 
 // Consulta SQL para obtener personal de la empresa ITL en el área PRESUIT, ordenado alfabéticamente por apellidos
 $sql = "SELECT usuarios.nombre, usuarios.apellidos, usuarios.email, usuarios.imagen, 
-               usuarios.extension, usuarios.primary_phone_number, tipousuario.nombre AS tipousuario_nombre
+               usuarios.extension, usuarios.primary_phone_number, tipousuario.nombre AS tipousuario_nombre,
+               tipousuario.descripcion AS tipousuario_descripcion
         FROM usuarios
         INNER JOIN departamento ON usuarios.iddepartamento = departamento.iddepartamento
         INNER JOIN tipousuario ON usuarios.idtipousuario = tipousuario.idtipousuario
@@ -422,7 +423,8 @@ $usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
         <p><strong>Puesto:</strong> <?php echo htmlspecialchars($usuario['tipousuario_nombre']); ?></p>
         <p><strong>Email:</strong> <?php echo htmlspecialchars($usuario['email']); ?></p>
         <p><strong>Extensión:</strong> <?php echo htmlspecialchars($usuario['extension']); ?></p>
-        <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($usuario['primary_phone_number']); ?></p>        
+        <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($usuario['primary_phone_number']); ?></p> 
+        <p><strong>Funciones:</strong><br> <?php echo nl2br(htmlspecialchars($usuario['tipousuario_descripcion'], ENT_QUOTES, 'UTF-8')); ?></p> 
     </div>
                      
                                         

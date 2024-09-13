@@ -53,10 +53,10 @@ require 'header.php';
       <input class="form-control" type="hidden" name="idtipousuario" id="idtipousuario">
       <input class="form-control" type="text" name="nombre" id="nombre" maxlength="50" placeholder="Nombre" required>
     </div>
-        <div class="form-group col-lg-6 col-md-6 col-xs-12">
-      <label for="">Descripcion</label>
-      <input class="form-control" type="text" name="descripcion" id="descripcion" maxlength="256" placeholder="Descripcion">
-    </div>
+    <div class="form-group col-lg-6 col-md-6 col-xs-12">
+  <label for="descripcion">Descripcion</label>
+  <textarea class="form-control" name="descripcion" id="descripcion" rows="4" maxlength="256" placeholder="Descripcion"></textarea>
+</div>
     <div class="form-group col-lg-12 col-md-12 col-sm-12 col-xs-12">
       <button class="btn btn-primary" type="submit" id="btnGuardar"><i class="fa fa-save"></i>  Guardar</button>
 
