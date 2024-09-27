@@ -104,8 +104,11 @@ body {
 
     
         <div class="login-logo">
-       <a href="login.html"><b class="text-primary" >Reporte De</b> Marcaciones</a>
-      </div><!-- /.login-logo -->
+            <a href="login.html">
+               <img src="../files/Imagenes/unnamed.png" alt="Intranet Logo" style="width:100px; height:auto;">
+               <b class="text-primary">Intranet</b>
+            </a>
+         </div><!-- /.login-logo -->
       <div >
         <h3 align="left" > <p class="text-primary">Ingrese sus datos de Acceso:</p></h3>
         <form method="post" id="frmAcceso">
@@ -132,8 +135,9 @@ body {
             </div>
         </div>
         <br>
-        <button class="btn-home" onclick="location.href='../../index.php'">Regresar a Inicio</button>
-
+        <!--
+        <button class="btn-home" onclick="location.href='../../index2'">Regresar a Inicio</button>
+-->
 
         </form>        
 

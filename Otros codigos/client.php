@@ -107,7 +107,7 @@
                            <div class="collapse navbar-collapse" id="navbarsExample04">
                               <ul class="navbar-nav mr-auto">
                                  <li class="nav-item ">
-                                    <a class="nav-link" href="index.php"> Home  </a>
+                                    <a class="nav-link" href="index2"> Home  </a>
                                  </li>
                                  <li class="nav-item">
                                     <a class="nav-link" href="about.php">about</a>
@@ -241,7 +241,7 @@
                   <div class="col-lg-2 col-md-6 col-sm-6">
                      <h3>Menus</h3>
                      <ul class="link_icon">
-                        <li > <a href="index.php"> Home</a></li>
+                        <li > <a href="index2"> Home</a></li>
                         <li>
                            <a href="about.php">
                               </i>About Us  

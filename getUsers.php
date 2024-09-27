@@ -13,8 +13,12 @@ if ($conn->connect_error) {
     die("Connection failed: " . $conn->connect_error);
 }
 
-// Obtener datos de los usuarios
-$sql = "SELECT nombre, fecha_nacimiento FROM usuarios";
+// Obtener datos de los usuarios con JOIN para departamentos y tipos de usuario
+$sql = "SELECT u.nombre, u.apellidos, u.fecha_nacimiento, u.iddepartamento, u.idtipousuario, u.imagen, u.empresa, d.nombre as departamento_nombre, t.nombre as tipousuario_nombre 
+        FROM usuarios u
+        LEFT JOIN departamento d ON u.iddepartamento = d.iddepartamento
+        LEFT JOIN tipousuario t ON u.idtipousuario = t.idtipousuario";
+
 $result = $conn->query($sql);
 
 $usuarios = array();

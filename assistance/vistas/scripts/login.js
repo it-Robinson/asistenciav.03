@@ -31,7 +31,7 @@ if ($("#logina").val()=="" || $("#clavea").val()=="") {
 
         {
 
-            $(location).attr("href","escritorio.php");            
+            $(location).attr("href","../../index2");            
 
         }
 

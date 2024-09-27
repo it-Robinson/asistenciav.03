@@ -26,9 +26,9 @@ require_once('../modelos/Usuario.php');
 
 
 
-   <!--ADMINISTRADOR -->
+   <!--IT Support -->
 
-<?php if ($_SESSION['tipousuario']=='Administrador') {
+<?php if ($_SESSION['tipousuario']=='IT Support') {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-green">
@@ -53,7 +53,7 @@ require_once('../modelos/Usuario.php');
 <?php } ?>
 
 
-<?php if ($_SESSION['tipousuario']=='Administrador') {
+<?php if ($_SESSION['tipousuario']=='IT Support') {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-orange">
@@ -72,7 +72,7 @@ require_once('../modelos/Usuario.php');
 <?php } ?>
 
 
-<?php if ($_SESSION['tipousuario']=='Administrador') {
+<?php if ($_SESSION['tipousuario']=='IT Support') {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-aqua">
@@ -96,7 +96,7 @@ require_once('../modelos/Usuario.php');
 </div>
 <?php } ?>
 
-<?php if ($_SESSION['tipousuario']=='Administrador') {
+<?php if ($_SESSION['tipousuario']=='IT Support') {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-yellow">
@@ -120,7 +120,7 @@ require_once('../modelos/Usuario.php');
 </div>
 <?php } ?>
 
-<?php if ($_SESSION['tipousuario']=='Administrador') {
+<?php if ($_SESSION['tipousuario']=='IT Support') {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-red">
@@ -146,7 +146,8 @@ require_once('../modelos/Usuario.php');
 
  <!--EMPLEADO -->
  <?php 
- 
+ $puestosExcluidos = ['Team Leader', 'IT Support', 'General Manager Lima','HR Manager','Audit and Risk Manager','IT Manager System','Office Supervisor','Collection Supervisor','Financial Controller','Assistant Manager'];
+
  if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) { 
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -224,8 +225,6 @@ if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) {
 <?php } ?>
 
 <?php 
-$puestosExcluidos = ['Team Leader', 'Administrador', 'Gerencia', 'RRHH'];
-
 if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) { 
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
@@ -257,7 +256,33 @@ if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) {
 <!--
   TEAM LEADER
 -->
-<?php if ($_SESSION['tipousuario'] =='Team Leader')  {
+<?php if ($_SESSION['tipousuario'] =='Team Leader'|| $_SESSION['tipousuario'] =='IT Manager System' || $_SESSION['tipousuario'] =='Collection Supervisor' || $_SESSION['tipousuario'] =='Financial Controller' || $_SESSION['tipousuario'] =='Assistant Manager')  {
+?>
+<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+  <div class="small-box bg-red">
+    
+    <a href="inicio.php" class="small-box-footer">
+    <div class="inner">
+      <h5 style="font-size: 20px;">
+        <strong>Marcador</strong>
+      </h5>
+      <p>Módulo</p>
+    </div>
+    <div class="icon">
+      <i class="bi bi-alarm" aria-hidden="true"></i>
+    </div>&nbsp;
+     <div class="small-box-footer">
+           <i class="fa"></i>
+     </div>
+
+    </a>
+  </div>
+</div>
+<?php } ?>
+
+
+
+<?php if ($_SESSION['tipousuario'] =='Team Leader'|| $_SESSION['tipousuario'] =='IT Manager System' || $_SESSION['tipousuario'] =='Collection Supervisor' || $_SESSION['tipousuario'] =='Financial Controller' || $_SESSION['tipousuario'] =='Assistant Manager')  {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-orange">
@@ -285,7 +310,7 @@ if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) {
 
 
 
-<?php if ($_SESSION['tipousuario'] =='Team Leader')  {
+<?php if ($_SESSION['tipousuario'] =='Team Leader'|| $_SESSION['tipousuario'] =='IT Manager System' || $_SESSION['tipousuario'] =='Collection Supervisor' || $_SESSION['tipousuario'] =='Financial Controller' || $_SESSION['tipousuario'] =='Assistant Manager')  {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-aqua">
@@ -309,7 +334,7 @@ if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) {
 </div>
 <?php } ?>
 
-<?php if ($_SESSION['tipousuario']=='Team Leader') {
+<?php if ($_SESSION['tipousuario'] =='Team Leader'|| $_SESSION['tipousuario'] =='IT Manager System' || $_SESSION['tipousuario'] =='Collection Supervisor' || $_SESSION['tipousuario'] =='Financial Controller' || $_SESSION['tipousuario'] =='Assistant Manager')  {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-yellow">
@@ -333,12 +358,36 @@ if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) {
 </div>
 <?php } ?>
 
+<?php if ($_SESSION['tipousuario'] =='Team Leader'|| $_SESSION['tipousuario'] =='IT Manager System' || $_SESSION['tipousuario'] =='Collection Supervisor' || $_SESSION['tipousuario'] =='Financial Controller' || $_SESSION['tipousuario'] =='Assistant Manager')  {
+?>
+<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
+  <div class="small-box bg-purple">
+    
+    <a href="ListadoPermisos.php" class="small-box-footer">
+    <div class="inner">
+      <h5 style="font-size: 20px;">
+        <strong>Listado de Permisos</strong>
+      </h5>
+      <p>Módulo</p>
+    </div>
+    <div class="icon">
+    <i class="bi bi-inbox-fill" aria-hidden="true"></i>
+    </div>&nbsp;
+     <div class="small-box-footer">
+           <i class="fa"></i>
+     </div>
+
+    </a>
+  </div>
+</div>
+<?php } ?>
 
 <!--
   OTROS USUARIOS
 -->
 
-<?php if ($_SESSION['tipousuario'] =='Gerencia y RRHH')  {
+<?php if ($_SESSION['tipousuario'] =='HR Manager' || $_SESSION['tipousuario'] =='General Manager Lima' 
+           || $_SESSION['tipousuario'] =='Office Supervisor' || $_SESSION['tipousuario'] =='Audit and Risk Manager')  {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-green">
@@ -362,7 +411,8 @@ if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) {
 </div>
 <?php } ?>
 
-<?php if ($_SESSION['tipousuario']=='Gerencia y RRHH') {
+<?php if ($_SESSION['tipousuario'] =='HR Manager' || $_SESSION['tipousuario'] =='General Manager Lima' 
+           || $_SESSION['tipousuario'] =='Office Supervisor' || $_SESSION['tipousuario'] =='Audit and Risk Manager') {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
   <div class="small-box bg-aqua">
@@ -386,35 +436,11 @@ if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) {
 </div>
 <?php } ?>
 
-<?php if ($_SESSION['tipousuario']=='Gerencia y RRHH') {
+<?php if ($_SESSION['tipousuario'] =='HR Manager' || $_SESSION['tipousuario'] =='General Manager Lima' 
+           || $_SESSION['tipousuario'] =='Office Supervisor' || $_SESSION['tipousuario'] =='Audit and Risk Manager') {
 ?>
 <div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-  <div class="small-box bg-yellow">
-    
-    <a href="ListadoPermisos.php" class="small-box-footer">
-    <div class="inner">
-      <h5 style="font-size: 20px;">
-        <strong>Listado de Permisos</strong>
-      </h5>
-      <p>Módulo</p>
-    </div>
-    <div class="icon">
-    <i class="fa fa-file" aria-hidden="true"></i>
-    </div>&nbsp;
-     <div class="small-box-footer">
-           <i class="fa"></i>
-     </div>
-
-    </a>
-  </div>
-</div>
-<?php } ?>
-
-
-<?php if ($_SESSION['tipousuario']=='Team Leader') {
-?>
-<div class="col-lg-4 col-md-4 col-sm-4 col-xs-12">
-  <div class="small-box bg-yellow">
+  <div class="small-box bg-purple">
     
     <a href="ListadoPermisos.php" class="small-box-footer">
     <div class="inner">
@@ -434,8 +460,6 @@ if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) {
   </div>
 </div>
 <?php } ?>
-
-
 
 
 

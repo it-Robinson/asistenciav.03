@@ -160,7 +160,9 @@ $emails_teamleader = [];
 $emails_gerencia = [];
 
 // Consultar correos de Team Leaders del mismo área y empresa
-$sql_teamleader = "SELECT email FROM usuarios WHERE empresa = '$empresa_usuario' AND iddepartamento = $id_departamento_usuario AND idtipousuario = '4'";
+$sql_teamleader = "SELECT email FROM usuarios WHERE empresa = '$empresa_usuario' AND iddepartamento = $id_departamento_usuario 
+AND (idtipousuario = '4' OR  idtipousuario = '34' OR  idtipousuario = '39' OR  idtipousuario = '41' OR  idtipousuario = '47'
+)";
 $result_teamleader = mysqli_query($conn, $sql_teamleader);
 
 if ($result_teamleader && mysqli_num_rows($result_teamleader) > 0) {
@@ -170,7 +172,13 @@ if ($result_teamleader && mysqli_num_rows($result_teamleader) > 0) {
 }
 
 // Consultar correos de Gerentes de la misma empresa
-$sql_gerencia = "SELECT email FROM usuarios WHERE empresa = '$empresa_usuario' AND idtipousuario = '7'";
+$sql_gerencia = "SELECT email FROM usuarios 
+                 WHERE empresa = '$empresa_usuario'
+                 AND (
+                     ('$empresa_usuario' = 'ITL' AND idtipousuario = 33) 
+                     OR 
+                     ('$empresa_usuario' = 'Claimpay' AND idtipousuario = 32)
+                 )";
 $result_gerencia = mysqli_query($conn, $sql_gerencia);
 
 if ($result_gerencia && mysqli_num_rows($result_gerencia) > 0) {
@@ -213,7 +221,7 @@ if ($result_gerencia && mysqli_num_rows($result_gerencia) > 0) {
             $mail->setFrom('it@itl.legal', '**Notificación de Sistema**');
             $mail->addAddress('malena@itl.legal');
            // $mail->addAddress('jose@itl.legal');
-           // $mail->addAddress('luismiguel@itl.legal');
+            $mail->addAddress('luismiguel@itl.legal');
 
 
     // Añadir correos de Team Leaders al correo
@@ -229,7 +237,7 @@ if ($result_gerencia && mysqli_num_rows($result_gerencia) > 0) {
            $mail->CharSet = 'UTF-8';
             // Contenido del correo
             $mail->isHTML(true);
-            $mail->Subject = 'TEST';
+            $mail->Subject = 'Nueva solicitud de permiso';
 
             // Obtener nombre y apellido de la sesión "Nueva solicitud de permiso";
 
@@ -357,9 +365,10 @@ echo '<script>alert("La solicitud ha sido enviada y se ha notificado a las perso
             <label style="display: inline-block; width: 120px;">Motivo:</label>
             <select id="motivo" name="motivo" onchange="mostrarFormato()" required>
                 <option value="" selected hidden>Seleccionar una opción</option>
-                <option value="Descanso Médico">Cita Médica</option>
+                <option value="Cita Médica">Cita Médica</option>
                 <option value="Vacaciones">Vacaciones</option>
                 <option value="Permiso personal">Permiso personal</option>
+                <option value="Descanso Médico">Descanso Médico</option>
                 <option value="Otros">Otros</option>
             </select>
             <a id="formato_vacaciones" href="#" style="display: none; margin-left: 10px;">Descargar formato de solicitud</a>
@@ -401,7 +410,7 @@ function mostrarFormato() {
     }
 </script>
 
-<!-- Regla de dos días anticipados -->
+<!-- Regla de dos días anticipados 
 <script>
         function obtenerFechaMinima() {
             let fecha = new Date(); // Fecha actual
@@ -441,7 +450,7 @@ function mostrarFormato() {
         });
     </script>
 
-
+-->
 
  <br>
 

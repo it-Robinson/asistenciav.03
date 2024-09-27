@@ -1,3 +1,37 @@
+<?php
+session_start();
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+header('Pragma: no-cache');
+
+// Tiempo máximo de inactividad en segundos (5 minutos = 300 segundos)
+$tiempo_max_inactividad = 120;
+
+if (isset($_SESSION['ultima_actividad'])) {
+    // Calcular el tiempo de inactividad
+    $inactividad = time() - $_SESSION['ultima_actividad'];
+
+    if ($inactividad > $tiempo_max_inactividad) {
+        // Si el tiempo de inactividad supera el límite, destruir la sesión y redirigir al login
+        session_unset(); // Eliminar todas las variables de sesión
+        session_destroy(); // Destruir la sesión
+        header("Location: ../assistance/vistas/login.html"); // Redirigir al login
+        exit();
+    }
+}
+
+// Actualizar el tiempo de última actividad
+$_SESSION['ultima_actividad'] = time();
+
+// Verificar si la sesión está iniciada
+if (!isset($_SESSION['nombre'])) {
+    // Redirigir al login si no está autenticado
+    header("Location: ../assistance/vistas/login.html");
+    exit();
+}
+?>
+
+
 <!DOCTYPE html>
 <html lang="en">
 
@@ -212,7 +246,19 @@
     display: flex;
     justify-content: flex-end;
 }
+.logout-btn {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: bold;
+}
 
+.logout-btn:hover {
+    background-color: darkred;
+}
     </style>
 
       
@@ -257,7 +303,7 @@
                      <div class="collapse navbar-collapse" id="navbarsExample04">
                         <ul class="navbar-nav mr-auto">
                            <li class="nav-item ">
-                              <a class="nav-link" href="../index">Home</a>
+                              <a class="nav-link" href="../index2">Home</a>
                            </li>
                            <li class="nav-item">
                               <a class="nav-link" href="../news/news">News</a>
@@ -267,7 +313,7 @@
                            </li>
                            <li class="nav-item dropdown ">
                               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
-                                 Rules of procedure
+                                 Rules
                               </a>
                               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                  <div class="dropdown-submenu">
@@ -283,36 +329,42 @@
                                  Team
                               </a>
                               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                                 <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">ITL</a>
-                                    <div class="dropdown-menu">
-                                       <a class="dropdown-item" href="../team/itl/presuit">Presuit</a>
-                                       <a class="dropdown-item" href="../team/itl/filing">Filing</a>
-                                       <a class="dropdown-item" href="../team/itl/legal">Legal Assistant</a>
-                                       <a class="dropdown-item" href="../team/itl/release">Release</a>
-                                       <a class="dropdown-item" href="../team/itl/uploading">Uploading</a>
-                                       <a class="dropdown-item" href="../team/itl/accounting">Accounting Assistant</a>
-                                       <a class="dropdown-item" href="../team/itl/customer">Customer Service</a>
-                                    </div>
-                                 </div>
+                              <div class="dropdown-submenu">
+                                                <a class="dropdown-item" href="../team/itl/administrativearea">Administrative area</a>
+                                                <a class="dropdown-item dropdown-toggle" href="#">ITL</a>
+                                                <div class="dropdown-menu">
+                                                    <a class="dropdown-item" href="../team/itl/presuit">Settlement</a>
+                                                    <a class="dropdown-item" href="../team/itl/HOS">HOS</a>
+                                                    <a class="dropdown-item" href="../team/itl/filing">Filing</a>
+                                                    <a class="dropdown-item" href="../team/itl/legalassistant">Legal Assistant</a>
+                                                    <a class="dropdown-item" href="../team/itl/scheduling">Scheduling</a>
+                                                    <a class="dropdown-item" href="../team/itl/release">Release</a>
+                                                    <a class="dropdown-item" href="../team/itl/uploading">Uploading</a>
+                                                    <a class="dropdown-item" href="../team/itl/account">Account</a>
+                                                </div>
+                                            </div>
                                  <div class="dropdown-submenu">
                                     <a class="dropdown-item dropdown-toggle" href="#">Claimpay</a>
                                     <div class="dropdown-menu">
-                                       <a class="dropdown-item" href="../team/claimpay/underwriting">Junior Underwriting</a>
-                                       <a class="dropdown-item" href="../team/claimpay/accounting">Accounting</a>
-                                       <a class="dropdown-item" href="../team/claimpay/attorney">Attorney</a>
-                                       <a class="dropdown-item" href="../team/claimpay/collections">Collections</a>
-                                       <a class="dropdown-item" href="../team/claimpay/customers">Customer Service</a>
+                                                    <a class="dropdown-item" href="../team/claimpay/operations">Operations</a>
+                                                    <a class="dropdown-item" href="../team/claimpay/finance">Finance</a>
+                                                    <a class="dropdown-item" href="../team/claimpay/revenue">Revenue</a>
+                                                    <a class="dropdown-item" href="../team/claimpay/underwriting">Underwriting</a> 
                                     </div>
                                  </div>
                               </div>
                            </li>
                            <li class="nav-item">
-                              <a class="nav-link" href="../assistance/vistas/login">Remote assistance</a>
+                              <a class="nav-link" href="../assistance/vistas/escritorio">Remote assistance</a>
                            </li>
+                           <!--
                            <li class="nav-item">
                                  <a class="nav-link" href="../contact">contact</a>
                            </li>
+-->
+                           <li class="nav-item">
+    <a href="../assistance/ajax/usuario.php?op=salir" class="nav-link logout-btn">Log out</a>
+</li>
                         </ul>
                      </div>
                   </nav>
@@ -362,11 +414,11 @@
                     <div class="col-lg-2 col-md-6 col-sm-6">
                         <h3>Menus</h3>
                         <ul class="link_icon">
-                            <li><a href="../index" class="dropdown-item ">Home</a></li>
+                            <li><a href="../index2" class="dropdown-item ">Home</a></li>
                             <li><a href="../news/news" class="dropdown-item ">News</a></li>
                             <li><a href="../calendar/calendar" class="dropdown-item active">Calendar</a></li>
                             <li class="dropdown-submenu">
-                                <a href="#" class="dropdown-toggle dropdown-item " data-toggle="dropdown">Rules of procedure</a>
+                                <a href="#" class="dropdown-toggle dropdown-item " data-toggle="dropdown">Rules</a>
                                 <ul class="dropdown-menu">
 
                                 <li><a class="dropdown-item" href="../rules/rulers2">English</a></li>
@@ -378,31 +430,34 @@
                                 <a href="#" class="dropdown-toggle dropdown-item" data-toggle="dropdown">Team</a>
                                 <ul class="dropdown-menu">
                                     <li class="dropdown-submenu">
+                                        <a class="dropdown-item" href="../team/itl/administrativearea">Administrative area</a>
                                         <a href="#" class="dropdown-toggle dropdown-item" data-toggle="dropdown">ITL</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="../team/itl/presuit">Presuit</a></li>
+                                            <li><a class="dropdown-item" href="../team/itl/presuit">Settlement</a></li>
+                                            <li><a class="dropdown-item" href="../team/itl/HOS">HOS</a></li>
                                             <li><a class="dropdown-item" href="../team/itl/filing">Filing</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/legal">Legal Assistant</a></li>
+                                            <li><a class="dropdown-item" href="../team/itl/legalassistant">Legal Assistance</a></li>
+                                            <li><a class="dropdown-item" href="../team/itl/scheduling">Scheduling</a></li>
                                             <li><a class="dropdown-item" href="../team/itl/release">Release</a></li>
                                             <li><a class="dropdown-item" href="../team/itl/uploading">Uploading</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/accounting">Accounting Assistant</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/customer">Customer Service</a></li>
+                                            <li><a class="dropdown-item" href="../team/itl/account">Account</a></li>
                                         </ul>
                                     </li>
                                     <li class="dropdown-submenu">
                                         <a href="#" class="dropdown-toggle dropdown-item" data-toggle="dropdown">Claimpay</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="../team/claimpay/underwriting">Junior Underwriting</a></li>
-                                            <li><a class="dropdown-item" href="../team/claimpay/accounting">Accounting</a></li>
-                                            <li><a class="dropdown-item" href="../team/claimpay/attorney">Attorney</a></li>
-                                            <li><a class="dropdown-item" href="../team/claimpay/collections">Collections</a></li>
-                                            <li><a class="dropdown-item" href="../team/claimpay/customers">Customer Service</a></li>
+                                            <li><a class="dropdown-item" href="../team/claimpay/operations">Operations</a></li>
+                                            <li><a class="dropdown-item" href="../team/claimpay/finance">Finance</a></li>
+                                            <li><a class="dropdown-item" href="../team/claimpay/revenue">Revenue</a></li>
+                                            <li><a class="dropdown-item" href="../team/claimpay/underwriting">Underwriting</a></li>
                                         </ul>
                                     </li>
                                 </ul>
                             </li>
-                            <li><a href="../assistance/vistas/login" class="dropdown-item">Remote assistance</a></li>
+                            <li><a href="../assistance/vistas/escritorio" class="dropdown-item">Remote assistance</a></li>
+                            <!--
                             <li><a href="../contact" class="dropdown-item ">Contact</a></li>
+-->
                         </ul>
                     </div>
                 </div>

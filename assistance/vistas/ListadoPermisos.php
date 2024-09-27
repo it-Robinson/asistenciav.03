@@ -177,14 +177,15 @@ if (!isset($_SESSION['nombre'])) {
 
 // Obtener el iddepartamento y la empresa del usuario actual
 $usuario_id = $_SESSION['idusuario']; // Asumiendo que se guarda el id del usuario en la sesión
-$sql_usuario = "SELECT iddepartamento, empresa FROM usuarios WHERE idusuario = '$usuario_id'";
+$sql_usuario = "SELECT iddepartamento, empresa,idtipousuario FROM usuarios WHERE idusuario = '$usuario_id'";
 $result_usuario = mysqli_query($conn, $sql_usuario);
 $usuario_data = mysqli_fetch_assoc($result_usuario);
 $usuario_departamento = $usuario_data['iddepartamento'];
 $usuario_empresa = $usuario_data['empresa'];
+$usuario_tipousuario = $usuario_data['idtipousuario'];
 
 // Modificar la consulta SQL para permitir que los usuarios del departamento 9 vean todas las solicitudes
-if ($usuario_departamento == 9) {
+if ($usuario_departamento == 26 || $usuario_tipousuario==1) {
     $sql = "SELECT DATE_FORMAT(s.fecha_solicitud, '%d/%m/%Y %H:%i:%s') as fecha_solicitud,
         s.id,
         u.nombre,

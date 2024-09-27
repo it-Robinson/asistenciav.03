@@ -15,7 +15,7 @@ if (isset($_SESSION['ultima_actividad'])) {
         // Si el tiempo de inactividad supera el límite, destruir la sesión y redirigir al login
         session_unset(); // Eliminar todas las variables de sesión
         session_destroy(); // Destruir la sesión
-        header("Location: ../assistance/vistas/login.html"); // Redirigir al login
+        header("Location: ../../assistance/vistas/login.html"); // Redirigir al login
         exit();
     }
 }
@@ -26,13 +26,10 @@ $_SESSION['ultima_actividad'] = time();
 // Verificar si la sesión está iniciada
 if (!isset($_SESSION['nombre'])) {
     // Redirigir al login si no está autenticado
-    header("Location: ../assistance/vistas/login.html");
+    header("Location: ../../assistance/vistas/login.html");
     exit();
 }
 ?>
-
-
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -49,19 +46,19 @@ if (!isset($_SESSION['nombre'])) {
    <meta name="description" content="">
    <meta name="author" content="">
    <!-- bootstrap css -->
-   <link rel="stylesheet" href="../css/bootstrap.min.css">
+   <link rel="stylesheet" href="../../css/bootstrap.min.css">
    <!-- style css -->
-   <link rel="stylesheet" href="../css/style.css">
+   <link rel="stylesheet" href="../../css/style.css">
+   <link rel="stylesheet" href="../../css/styles02.css">
    <!-- Responsive-->
-   <link rel="stylesheet" href="../css/responsive.css">
-   <link rel="stylesheet" href="../css/owl.carousel.min.css">
+   <link rel="stylesheet" href="../../css/responsive.css">
+   <link rel="stylesheet" href="../../css/owl.carousel.min.css">
+   
    <!-- fevicon -->
-   <link rel="icon" href="../images/icono.ico" type="image/gif" />
+   <link rel="icon" href="../../images/icono.ico" type="image/gif" />
    <!-- Scrollbar Custom CSS -->
    <link rel="stylesheet" href="../css/jquery.mCustomScrollbar.min.css">
    <!-- Tweaks for older IEs-->
-   <link rel="stylesheet" href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/css/bootstrap.min.css">
-   <link rel="stylesheet" href="../css/styles.css">
    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
    <!--[if lt IE 9]>
@@ -232,10 +229,11 @@ if (!isset($_SESSION['nombre'])) {
     color: #FFD700; /* Color dorado para los íconos */
 }
 
-.text-left {
-    display: flex;
-    justify-content: flex-start;
+.text-left p {
+    display: block; /* Asegura que cada <p> ocupe toda la línea */
+    margin-bottom: 8px; /* Espacio entre los elementos */
 }
+
 
 .text-center {
     display: flex;
@@ -246,6 +244,46 @@ if (!isset($_SESSION['nombre'])) {
     display: flex;
     justify-content: flex-end;
 }
+.team-section {
+    background-color: #f9f9f9;
+}
+
+/* Diseño de tarjetas de perfil */
+.team-member .card {
+    border: none;
+    transition: transform 0.3s ease, box-shadow 0.3s ease;
+    min-width: 300px; /* Ancho mínimo para que crezca si es necesario */
+    width: auto; /* Ajuste automático al contenido */
+    max-width: 100%; /* Limita el ancho para no sobrepasar el tamaño de la pantalla */
+}
+
+.team-member .card:hover {
+    transform: translateY(-10px);
+    box-shadow: 0 15px 30px rgba(0, 0, 0, 0.1);
+}
+
+.team-member img {
+    width: 120px;
+    height: 120px;
+    object-fit: cover;
+    border: 3px solid #fff;
+    margin-bottom: 10px;
+}
+
+.team-member h3 {
+    font-size: 1.2rem;
+    color: #333;
+}
+
+.team-member p {
+    font-size: 0.9rem;
+    color: #555;
+}
+
+.team-member p strong {
+    font-weight: bold;
+}
+
 .logout-btn {
     background-color: red;
     color: white;
@@ -260,16 +298,54 @@ if (!isset($_SESSION['nombre'])) {
     background-color: darkred;
 }
     </style>
-
-
-      
 </head>
-<!-- body -->
 
 <body class="main-layout">
+
+
+
+
+<?php
+// Conexión a la base de datos
+$host = 'localhost';          // Cambia por tu servidor de base de datos
+$dbname = 'asistencia'; // Cambia por el nombre de tu base de datos
+$username = 'root';      // Cambia por tu usuario de base de datos
+$password = '';   // Cambia por tu contraseña de base de datos
+
+try {
+    $pdo = new PDO("mysql:host=$host;dbname=$dbname;charset=utf8", $username, $password);
+    $pdo->setAttribute(PDO::ATTR_ERRMODE, PDO::ERRMODE_EXCEPTION);
+} catch (PDOException $e) {
+    echo "Error en la conexión: " . $e->getMessage();
+    exit();
+}
+
+// Consulta SQL para obtener personal de la empresa ITL en el área PRESUIT, ordenado alfabéticamente por apellidos
+$sql = "SELECT usuarios.nombre, usuarios.apellidos, usuarios.email, usuarios.imagen, 
+               usuarios.extension, usuarios.primary_phone_number, tipousuario.nombre AS tipousuario_nombre,
+               tipousuario.descripcion AS tipousuario_descripcion
+        FROM usuarios
+        INNER JOIN departamento ON usuarios.iddepartamento = departamento.iddepartamento
+        INNER JOIN tipousuario ON usuarios.idtipousuario = tipousuario.idtipousuario
+        WHERE usuarios.empresa = 'Claimpay' AND
+        ( departamento.nombre = 'OPERATIONS - IT'
+        OR departamento.nombre = 'OPERATIONS - COLLECTION'
+        OR departamento.nombre = 'OPERATIONS' OR departamento.nombre = 'IT'
+        )
+        ORDER BY usuarios.nombre ASC";
+  // Ordena por apellidos de A a Z
+
+$stmt = $pdo->prepare($sql);
+$stmt->execute();
+$usuarios = $stmt->fetchAll(PDO::FETCH_ASSOC);
+
+
+?>
+
+
    <!-- loader  -->
    <div class="loader_bg">
-      <div class="loader"><img src="../images/loading.gif" alt="#" /></div>
+      <div class="loader"><img src="../../images/loading.gif" alt="#" /></div>
    </div>
    <!-- end loader -->
    <!-- header -->
@@ -280,7 +356,7 @@ if (!isset($_SESSION['nombre'])) {
         <div class="container">
             <div class="row d_flex">
                 <div class="col-md-3 text-left">
-                    <a class="logo" href="#"><img src="../images/logo1.jpg" alt="Logo Left" /></a>
+                    <a class="logo" href="#"><img src="../../images/logo1.jpg" alt="Logo Left" /></a>
                 </div>
                 <div class="col-md-6 text-center">
                     <ul class="conta_icon">
@@ -289,7 +365,7 @@ if (!isset($_SESSION['nombre'])) {
                     </ul>
                 </div>
                 <div class="col-md-3 text-right">
-                    <a class="logo" href="#"><img src="../images/logo2.png" alt="Logo Right" /></a>
+                    <a class="logo" href="#"><img src="../../images/logo2.png" alt="Logo Right" /></a>
                 </div>
             </div>
         </div>
@@ -304,13 +380,13 @@ if (!isset($_SESSION['nombre'])) {
                      <div class="collapse navbar-collapse" id="navbarsExample04">
                         <ul class="navbar-nav mr-auto">
                            <li class="nav-item ">
-                              <a class="nav-link" href="../index2">Home</a>
-                           </li>
-                           <li class="nav-item active">
-                              <a class="nav-link" href="news">News</a>
+                              <a class="nav-link" href="../../index2">Home</a>
                            </li>
                            <li class="nav-item">
-                              <a class="nav-link" href="../calendar/calendar">Calendar</a>
+                              <a class="nav-link" href="../../news/news">News</a>
+                           </li>
+                           <li class="nav-item ">
+                              <a class="nav-link" href="../../calendar/calendar">Calendar</a>
                            </li>
                            <li class="nav-item dropdown ">
                               <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
@@ -318,53 +394,53 @@ if (!isset($_SESSION['nombre'])) {
                               </a>
                               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                  <div class="dropdown-submenu">
-                                    <a class="dropdown-item" href="../rules/rulers2">English</a>
+                                    <a class="dropdown-item"  href="../../rules/rulers2">English</a>
                                  </div>
                                  <div class="dropdown-submenu">
-                                    <a class="dropdown-item" href="../rules/rulers">Spanish</a>
+                                    <a class="dropdown-item" href="../../rules/rulers">Spanish</a>
                                  </div>
                               </div>
                            </li>
                            <li class="nav-item dropdown ">
-                              <a class="nav-link dropdown-toggle" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
+                              <a class="nav-link dropdown-toggle active" href="#" id="navbarDropdown" role="button" data-toggle="dropdown" aria-haspopup="true" aria-expanded="false">
                                  Team
                               </a>
                               <div class="dropdown-menu" aria-labelledby="navbarDropdown">
-                              <div class="dropdown-submenu">
-                                                <a class="dropdown-item" href="../team/itl/administrativearea">Administrative area</a>
-                                                <a class="dropdown-item dropdown-toggle" href="#">ITL</a>
-                                                <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="../team/itl/presuit">Settlement</a>
-                                                    <a class="dropdown-item" href="../team/itl/HOS">HOS</a>
-                                                    <a class="dropdown-item" href="../team/itl/filing">Filing</a>
-                                                    <a class="dropdown-item" href="../team/itl/legalassistant">Legal Assistant</a>
-                                                    <a class="dropdown-item" href="../team/itl/scheduling">Scheduling</a>
-                                                    <a class="dropdown-item" href="../team/itl/release">Release</a>
-                                                    <a class="dropdown-item" href="../team/itl/uploading">Uploading</a>
-                                                    <a class="dropdown-item" href="../team/itl/account">Account</a>
-                                                </div>
-                                            </div>
                                  <div class="dropdown-submenu">
-                                    <a class="dropdown-item dropdown-toggle" href="#">Claimpay</a>
+                                    <a class="dropdown-item" href="administrativearea">Administrative area</a>
+                                    <a class="dropdown-item dropdown-toggle" href="#">ITL</a>
                                     <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="../team/claimpay/operations">Operations</a>
-                                                    <a class="dropdown-item" href="../team/claimpay/finance">Finance</a>
-                                                    <a class="dropdown-item" href="../team/claimpay/revenue">Revenue</a>
-                                                    <a class="dropdown-item" href="../team/claimpay/underwriting">Underwriting</a> 
+                                    <a class="dropdown-item active" href="presuit">Settlement</a>
+                                                    <a class="dropdown-item" href="HOS">HOS</a>
+                                                    <a class="dropdown-item" href="filing">Filing</a>
+                                                    <a class="dropdown-item" href="legalassistant">Legal Assistant</a>
+                                                    <a class="dropdown-item" href="scheduling">Scheduling</a>
+                                                    <a class="dropdown-item" href="release">Release</a>
+                                                    <a class="dropdown-item" href="uploading">Uploading</a>
+                                                    <a class="dropdown-item" href="account">Account</a>
+                                    </div>
+                                 </div>
+                                 <div class="dropdown-submenu">
+                                    <a class="dropdown-item dropdown-toggle active" href="#">Claimpay</a>
+                                    <div class="dropdown-menu">
+                                                    <a class="dropdown-item active" href="../claimpay/operations">Operations</a>
+                                                    <a class="dropdown-item" href="../claimpay/finance">Finance</a>
+                                                    <a class="dropdown-item" href="../claimpay/revenue">Revenue</a>
+                                                    <a class="dropdown-item" href="../claimpay/underwriting">Underwriting</a> 
                                     </div>
                                  </div>
                               </div>
                            </li>
                            <li class="nav-item">
-                              <a class="nav-link" href="../assistance/vistas/escritorio">Remote assistance</a>
+                              <a class="nav-link" href="../../assistance/vistas/escritorio">Remote assistance</a>
                            </li>
                            <!--
                            <li class="nav-item">
-                                 <a class="nav-link" href="../contact">contact</a>
+                                 <a class="nav-link" href="../../contact">contact</a>
                            </li>
 -->
                            <li class="nav-item">
-    <a href="../assistance/ajax/usuario.php?op=salir" class="nav-link logout-btn">Log out</a>
+    <a href="../../assistance/ajax/usuario.php?op=salir" class="nav-link logout-btn">Log out</a>
 </li>
                         </ul>
                      </div>
@@ -375,26 +451,57 @@ if (!isset($_SESSION['nombre'])) {
       </div>
    </header>
    <!-- end header inner -->
-    <div class="news-section">
-        <h2 class="text-center">Últimas Noticias</h2>
-        <div id="newsCarousel" class="carousel slide" data-ride="carousel">
-            <div class="carousel-inner" id="news-container">
-                <!-- Las noticias se añadirán aquí dinámicamente -->
-            </div>
-            <a class="carousel-control-prev" href="#newsCarousel" role="button" data-slide="prev">
-                <span class="carousel-control-prev-icon" aria-hidden="true"></span>
-                <span class="sr-only">Previous</span>
-            </a>
-            <a class="carousel-control-next" href="#newsCarousel" role="button" data-slide="next">
-                <span class="carousel-control-next-icon" aria-hidden="true"></span>
-                <span class="sr-only">Next</span>
-            </a>
-        </div>
+   <!-- end header -->
+<!-- Team Section -->
+<br>
+<section class="team-section py-5">
+   <div class="container">
+      <div class="row">
+         <?php if (!empty($usuarios)): ?>
+            <?php foreach ($usuarios as $usuario): ?>
+               <div class="col-md-6 col-lg-4 team-member mb-4">
+                  <div class="card p-3 shadow-sm h-100" style="min-width: 300px;">
+                     <!-- Imagen centrada y más grande -->
+                     <div class="text-center mb-3">
+                        <img src="../../assistance/files/usuarios/<?php echo htmlspecialchars($usuario['imagen']); ?>" alt="<?php echo htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellidos']); ?>" class="img-fluid rounded-circle" style="width: 120px; height: 120px; object-fit: cover;">
+                     </div>
+                     
+                     <!-- Nombre centrado -->
+                     <div class="text-center">
+                        <h3 class="h5 font-weight-bold"><?php echo htmlspecialchars($usuario['nombre'] . ' ' . $usuario['apellidos']); ?></h3>
+                     </div>
+
+    <!-- Email alineado a la izquierda -->
+    <div class="text-left">
+        <p><strong>Puesto:</strong> <?php echo htmlspecialchars($usuario['tipousuario_nombre']); ?></p>
+        <p><strong>Email:</strong> <?php echo htmlspecialchars($usuario['email']); ?></p>
+        <p><strong>Extensión:</strong> <?php echo htmlspecialchars($usuario['extension']); ?></p>
+        <p><strong>Teléfono:</strong> <?php echo htmlspecialchars($usuario['primary_phone_number']); ?></p> 
+        <p><strong>Funciones:</strong><br> <?php echo nl2br(htmlspecialchars($usuario['tipousuario_descripcion'], ENT_QUOTES, 'UTF-8')); ?></p> 
     </div>
+                     
+                                        
+                    
+    
+                  </div>
+               </div>
+            <?php endforeach; ?>
+         <?php else: ?>
+            <p>No se encontraron usuarios en el área de la empresa Claimpay.</p>
+         <?php endif; ?>
+      </div>
+   </div>
+</section>
 
 
-   
-    <footer>
+
+
+
+
+
+
+<!-- footer -->
+   <footer>
         <div class="footer">
             <div class="container">
                 <div class="row">
@@ -428,50 +535,49 @@ if (!isset($_SESSION['nombre'])) {
                     <div class="col-lg-2 col-md-6 col-sm-6">
                         <h3>Menus</h3>
                         <ul class="link_icon">
-                            <li><a href="../index2" class="dropdown-item ">Home</a></li>
-                            <li><a href="news" class="dropdown-item active">News</a></li>
-                            <li><a href="../calendar/calendar" class="dropdown-item">Calendar</a></li>
+                            <li><a href="../../index2" class="dropdown-item ">Home</a></li>
+                            <li><a href="../../news/news" class="dropdown-item ">News</a></li>
+                            <li><a href="../../calendar/calendar" class="dropdown-item ">Calendar</a></li>
                             <li class="dropdown-submenu">
-                                <a href="#" class="dropdown-toggle dropdown-item" data-toggle="dropdown">Rules</a>
+                                <a href="#" class="dropdown-toggle dropdown-item " data-toggle="dropdown">Rules</a>
                                 <ul class="dropdown-menu">
 
-                                <li><a class="dropdown-item" href="../rules/rulers2">English</a></li>
-                                <li><a class="dropdown-item" href="../rules/rulers">Spanish</a></li>
+                                <li><a class="dropdown-item" href="../../rules/rulers2">English</a></li>
+                                <li><a class="dropdown-item " href="../../rules/rulers">Spanish</a></li>
 
                                 </ul>
                             </li>
                             <li class="dropdown-submenu">
-                                <a href="#" class="dropdown-toggle dropdown-item" data-toggle="dropdown">Team</a>
+                                <a href="#" class="dropdown-toggle dropdown-item active" data-toggle="dropdown">Team</a>
                                 <ul class="dropdown-menu">
                                     <li class="dropdown-submenu">
-                                    <a class="dropdown-item" href="../team/itl/administrativearea">Administrative area</a>
                                         <a href="#" class="dropdown-toggle dropdown-item" data-toggle="dropdown">ITL</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="../team/itl/presuit">Settlement</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/HOS">HOS</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/filing">Filing</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/legalassistant">Legal Assistance</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/scheduling">Scheduling</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/release">Release</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/uploading">Uploading</a></li>
-                                            <li><a class="dropdown-item" href="../team/itl/account">Account</a></li>
+                                            <li><a class="dropdown-item active" href="presuit">Settlement</a></li>
+                                            <li><a class="dropdown-item" href="HOS">HOS</a></li>
+                                            <li><a class="dropdown-item" href="filing">Filing</a></li>
+                                            <li><a class="dropdown-item" href="legalassistant">Legal Assistance</a></li>
+                                            <li><a class="dropdown-item" href="scheduling">Scheduling</a></li>
+                                            <li><a class="dropdown-item" href="release">Release</a></li>
+                                            <li><a class="dropdown-item" href="uploading">Uploading</a></li>
+                                            <li><a class="dropdown-item" href="account">Account</a></li>
                                         </ul>
                                     </li>
                                     <li class="dropdown-submenu">
-                                        <a href="#" class="dropdown-toggle dropdown-item" data-toggle="dropdown">Claimpay</a>
+                                        <a href="#" class="dropdown-toggle dropdown-item active" data-toggle="dropdown">Claimpay</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="../team/claimpay/operations">Operations</a></li>
-                                            <li><a class="dropdown-item" href="../team/claimpay/finance">Finance</a></li>
-                                            <li><a class="dropdown-item" href="../team/claimpay/revenue">Revenue</a></li>
-                                            <li><a class="dropdown-item" href="../team/claimpay/underwriting">Underwriting</a></li>
+                                            <li><a class="dropdown-item active" href="../claimpay/operations">Operations</a></li>
+                                            <li><a class="dropdown-item" href="../claimpay/finance">Finance</a></li>
+                                            <li><a class="dropdown-item" href="../claimpay/revenue">Revenue</a></li>
+                                            <li><a class="dropdown-item" href="../claimpay/underwriting">Underwriting</a></li>
                                         </ul>
                                     </li>
                                 </ul>
                             </li>
-                            <li><a href="../assistance/vistas/escritorio" class="dropdown-item">Remote assistance</a></li>
-                            <!--
-                            <li><a href="../contact" class="dropdown-item">Contact</a></li>
--->
+                            <li><a href="../../assistance/vistas/escritorio" class="dropdown-item">Remote assistance</a></li>
+                            <!-- Contact 
+                            <li><a href="../../contact" class="dropdown-item ">Contact</a></li>
+                            -->
                         </ul>
                     </div>
                 </div>
@@ -489,18 +595,15 @@ if (!isset($_SESSION['nombre'])) {
     </footer>
    <!-- end footer -->
    <!-- Javascript files-->
-   <script src="../js/jquery.min.js"></script>
-   <script src="../js/popper.min.js"></script>
-   <script src="../js/bootstrap.bundle.min.js"></script>
-   <script src="../js/jquery-3.0.0.min.js"></script>
-   <script src="../js/owl.carousel.min.js"></script>
+   <script src="../../js/jquery.min.js"></script>
+   <script src="../../js/popper.min.js"></script>
+   <script src="../../js/bootstrap.bundle.min.js"></script>
+   <script src="../../js/jquery-3.0.0.min.js"></script>
+   <script src="../../js/owl.carousel.min.js"></script>
    <!-- sidebar -->
-   <script src="../js/jquery.mCustomScrollbar.concat.min.js"></script>
-   <script src="../js/custom.js"></script>
-    <script src="https://cdn.jsdelivr.net/npm/@popperjs/core@2.9.3/dist/umd/popper.min.js"></script>
-    <script src="https://stackpath.bootstrapcdn.com/bootstrap/4.5.2/js/bootstrap.min.js"></script>
-    <script src="../js/news.js"></script>
-    <script>
+   <script src="../../js/jquery.mCustomScrollbar.concat.min.js"></script>
+   <script src="../../js/custom.js"></script>
+   <script>
       // Handles the hover and click events for the submenus
       $(document).ready(function() {
          $('.dropdown-submenu a.dropdown-toggle').on('click', function(e) {
@@ -516,6 +619,7 @@ if (!isset($_SESSION['nombre'])) {
          });
       });
    </script>
+
 </body>
 
 </html>

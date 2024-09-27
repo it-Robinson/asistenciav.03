@@ -1,8 +1,40 @@
-<?php 
+<?php
+// Verificar si la sesión ha sido iniciada, si no, iniciarla
 if (strlen(session_id()) < 1) {
     session_start();
 }
+
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+header('Pragma: no-cache');
+
+// Tiempo máximo de inactividad en segundos (10 segundos en este caso)
+$tiempo_max_inactividad = 120;
+
+if (isset($_SESSION['ultima_actividad'])) {
+    // Calcular el tiempo de inactividad
+    $inactividad = time() - $_SESSION['ultima_actividad'];
+
+    if ($inactividad > $tiempo_max_inactividad) {
+        // Si el tiempo de inactividad supera el límite, destruir la sesión y redirigir al login
+        session_unset(); // Eliminar todas las variables de sesión
+        session_destroy(); // Destruir la sesión
+        header("Location: ../../assistance/vistas/login.html"); // Redirigir al login
+        exit();
+    }
+}
+
+// Actualizar el tiempo de última actividad
+$_SESSION['ultima_actividad'] = time();
+
+// Verificar si la sesión está iniciada (si no existe 'nombre', redirigir al login)
+if (!isset($_SESSION['nombre'])) {
+    // Redirigir al login si no está autenticado
+    header("Location: ../../assistance/vistas/login.html");
+    exit();
+}
 ?>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -119,6 +151,8 @@ if (strlen(session_id()) < 1) {
     font-weight: bold; /* Texto en negrita */
     background-color: white; /* Fondo blanco */
 }
+
+
 </style>
 
 </head>
@@ -160,47 +194,54 @@ if (strlen(session_id()) < 1) {
                         </a>
                         <ul class="dropdown-menu">
                             <!-- User image -->
-                            <li class="user-header">
-                                <img src="../files/usuarios/<?php echo $_SESSION['imagen']; ?>" class="img-circle" alt="User Image">
-                                <p>
-                                    <?php 
-                                    if (isset($_SESSION['nombre'])) {
-                                        $nombreCompleto = $_SESSION['nombre'];
-                                        $partesNombre = explode(' ', $nombreCompleto);
-                                        echo $partesNombre[0]; // Imprime el primer nombre
-                                    }
-                                    ?>
-                                    <?php 
-                                    if (isset($_SESSION['apellidos'])) {
-                                        $nombreCompleto = $_SESSION['apellidos'];
-                                        $partesNombre = explode(' ', $nombreCompleto);
-                                        echo $partesNombre[0]; // Imprime el primer nombre
-                                    }
-                                    ?>
-                                </p>
-                                <p>
-                                    <b>
-                                        <?php 
-                                        if (isset($_SESSION['nombre_departamento'])) {
-                                            $nombreCompleto = $_SESSION['nombre_departamento'];
-                                            $partesNombre = explode(' ', $nombreCompleto);
-                                            echo $partesNombre[0];
-                                            if (isset($partesNombre[1])) echo " " . $partesNombre[1];
-                                            if (isset($partesNombre[2])) echo " " . $partesNombre[2];
-                                        }
-                                        ?>
-                                    </b>
-                                </p>
-                            </li>
+                            <li class="user-header text-center">
+    <img src="../files/usuarios/<?php echo $_SESSION['imagen']; ?>" class="img-circle" alt="User Image">
+    <p>
+        <?php 
+        if (isset($_SESSION['nombre'])) {
+            $nombreCompleto = $_SESSION['nombre'];
+            $partesNombre = explode(' ', $nombreCompleto);
+            echo $partesNombre[0]; // Imprime el primer nombre
+        }
+        ?>
+        <?php 
+        if (isset($_SESSION['apellidos'])) {
+            $apellidoCompleto = $_SESSION['apellidos'];
+            $partesApellido = explode(' ', $apellidoCompleto);
+            echo " " . $partesApellido[0]; // Imprime el primer apellido
+        }
+        ?>
+    </p>
+    <p>
+        <b>
+            Área: 
+            <?php 
+            if (isset($_SESSION['nombre_departamento'])) {
+                echo $_SESSION['nombre_departamento']; // Imprime el nombre del departamento completo
+            }
+            ?>
+            <br>
+            Puesto: 
+            <?php 
+            if (isset($_SESSION['tipousuario'])) {
+                echo $_SESSION['tipousuario']; // Imprime el puesto del usuario
+            }
+            ?>
+        </b>
+    </p>
+</li>
+
 <!-- Menu Footer-->
 <li class="user-footer">
     <div class="pull-left">
         <!-- Agregamos el botón para editar el perfil -->
         <a href="editar_perfil.php" class="btn btn-default btn-flat">Editar Perfil</a>
     </div>
+    <!-- 
     <div class="pull-right">
         <a href="../ajax/usuario.php?op=salir" class="btn btn-primary" role="button">Salir</a>
     </div>
+    -->
 </li>
                         </ul>
                     </li>
@@ -244,7 +285,7 @@ if (strlen(session_id()) < 1) {
                 <li><a href="escritorio.php"><i class="bi bi-house"></i> <span>Inicio</span></a></li>
 
                 
-                <?php if ($_SESSION['tipousuario'] == 'Administrador') { ?>
+                <?php if ($_SESSION['tipousuario'] == 'IT Support') { ?>
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-folder"></i> <span>Acceso</span>
@@ -289,7 +330,7 @@ if (strlen(session_id()) < 1) {
                 <!--EMPLEADOS-->
 
                 <?php 
-                $puestosExcluidos = ['Team Leader', 'Administrador', 'Gerencia', 'RRHH'];
+                $puestosExcluidos = ['Team Leader', 'IT Support', 'General Manager Lima','HR Manager','Office Supervisor','Audit and Risk Manager','IT Manager System','Office Supervisor','Collection Supervisor','Financial Controller','Assistant Manager'];
                 
                 if (!in_array($_SESSION['tipousuario'], $puestosExcluidos)) { ?>
                     <li><a href="inicio.php"><i class="bi bi-alarm"></i><span> Marcador</span></a></li>
@@ -312,7 +353,7 @@ if (strlen(session_id()) < 1) {
                 <!--TEAM LEADER-->
 
 
-                <?php if ($_SESSION['tipousuario'] == 'Team Leader') { ?>
+                <?php if($_SESSION['tipousuario'] =='Team Leader'|| $_SESSION['tipousuario'] =='IT Manager System' || $_SESSION['tipousuario'] =='Collection Supervisor' || $_SESSION['tipousuario'] =='Financial Controller' || $_SESSION['tipousuario'] =='Assistant Manager') { ?>
                     <li><a href="inicio.php"><i class="bi bi-alarm"></i><span> Marcador</span></a></li>
                     <li class="treeview">
                         <a href="#">
@@ -337,7 +378,8 @@ if (strlen(session_id()) < 1) {
 
 
 
-                <?php if ($_SESSION['tipousuario'] == 'Gerencia y RRHH') { ?>
+                <?php if ($_SESSION['tipousuario'] =='HR Manager' || $_SESSION['tipousuario'] =='General Manager Lima' 
+           ||$_SESSION['tipousuario'] =='Office Supervisor' || $_SESSION['tipousuario'] =='Audit and Risk Manager')  { ?>
                     <li class="treeview">
                         <a href="#">
                             <i class="fa fa-clock-o"></i> <span>Mis Asistencias</span>
@@ -352,7 +394,7 @@ if (strlen(session_id()) < 1) {
                         </ul>
                     </li>
                 <?php } ?>
-                
+                <li><a href="../../index2"><i class="bi bi-arrow-90deg-up"></i> <span>Menú Principal</span></a></li>
             </ul>
         </section>
         <!-- /.sidebar -->

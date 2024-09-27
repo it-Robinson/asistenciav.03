@@ -39,7 +39,7 @@ if (!isset($_SESSION['nombre'])) {
             $imagen = $_SESSION['imagen'];
         }
 
-        $usuario->editar_usuario($idusuario, $nombre, $apellidos, $email, $imagen, $iddepartamento,$idtipousuario, $fecha_nacimiento, $tipo_turno, $empresa, $extension, $primary_phone_number);
+        $usuario->editar_usuario($idusuario, $nombre, $apellidos, $email, $imagen, $fecha_nacimiento, $tipo_turno, $extension, $primary_phone_number);
 
         $_SESSION['nombre'] = $nombre;
         $_SESSION['apellidos'] = $apellidos;
@@ -251,7 +251,7 @@ h2 {
                     <!-- Campo Empresa -->
                     <div class="col-md-6">
                         <label for="empresa" class="form-label">Empresa <i class="fas fa-building"></i></label>
-                        <select name="empresa" id="empresa" class="form-select" required>
+                        <select name="empresa" id="empresa" class="form-select" disabled>
                             <option value="" selected hidden>Seleccionar una opción</option>
                             <option value="ITL" <?php echo ($reg->empresa == 'ITL') ? 'selected' : ''; ?>>ITL</option>
                             <option value="Claimpay" <?php echo ($reg->empresa == 'Claimpay') ? 'selected' : ''; ?>>Claimpay</option>
@@ -263,23 +263,25 @@ h2 {
                 <div class="row g-3 mt-3">
                     <!-- Campo Departamento -->
                     <div class="col-md-6">
-                        <label for="iddepartamento" class="form-label">Departamento <i class="fas fa-sitemap"></i></label>
-                        <select name="iddepartamento" id="iddepartamento" class="form-select" required>
-                            <?php while ($row = $departamentos->fetch_object()): ?>
-                                <option value="<?php echo $row->iddepartamento; ?>" <?php echo ($reg->iddepartamento == $row->iddepartamento) ? 'selected' : ''; ?>>
-                                    <?php echo $row->nombre; ?>
-                                </option>
-                            <?php endwhile; ?>
-                        </select>
+                    <label for="iddepartamento" class="form-label">Departamento <i class="fas fa-sitemap"></i></label>
+    <select name="iddepartamento" id="iddepartamento" class="form-select" disabled>
+        <?php while ($row = $departamentos->fetch_object()): ?>
+            <option value="<?php echo $row->iddepartamento; ?>" 
+                data-empresa="<?php echo strtoupper(trim($row->descripcion)); ?>"
+                <?php echo ($reg->iddepartamento == $row->iddepartamento) ? 'selected' : ''; ?>>
+                <?php echo htmlspecialchars($row->nombre); ?>
+            </option>
+        <?php endwhile; ?>
+    </select>
                         <br>
                         <br>
-
-                        <label for="idtipousuario" class="form-label">Puesto <i class="fas fa-sitemap"></i></label>
-<select name="idtipousuario" id="idtipousuario" class="form-select" required>
+                                          <!-- Campo Puesto -->  
+<label for="idtipousuario" class="form-label">Puesto <i class="fas fa-sitemap"></i></label>
+<select name="idtipousuario" id="idtipousuario" class="form-select"  disabled>
     <?php while ($row = $tipousuarios->fetch_object()): ?>
         <?php 
             // Lista de puestos a ocultar, pero que se mostrarán si el usuario tiene ese puesto
-            $puestosOcultos = ['Team Leader', 'Administrador', 'Gerencia y RRHH', 'empleado', 'Receptionist'];
+            $puestosOcultos = ['Team Leader', 'IT Support', 'HR Manager', 'empleado', 'Receptionist'];
 
             // Si el puesto está en la lista de ocultos Y el usuario no tiene ese puesto, se omite
             if (in_array($row->nombre, $puestosOcultos) && $_SESSION['tipousuario'] != $row->nombre) {
@@ -328,6 +330,51 @@ h2 {
             }, 3000);
         }
     });
+</script>
+<script>
+    document.getElementById('empresa').addEventListener('change', function() {
+        var selectedEmpresa = this.value.toUpperCase(); // Convertimos a mayúsculas para hacer la coincidencia con 'data-empresa'
+        var departamentoSelect = document.getElementById('iddepartamento');
+        var opciones = departamentoSelect.querySelectorAll('option');
+
+        var departamentoActual = departamentoSelect.value; // Capturar el departamento seleccionado actualmente
+        console.log("Departamento actual: " + departamentoActual); // Depuración
+
+        // Mostrar u ocultar opciones de departamentos según la empresa seleccionada
+        opciones.forEach(function(option) {
+            var empresaOpcion = option.getAttribute('data-empresa');
+            console.log("Departamento: " + option.textContent + " | Empresa: " + empresaOpcion); // Depuración
+
+            // Mostrar el departamento actual o aquellos que coinciden con la empresa seleccionada
+            if (option.value === departamentoActual || empresaOpcion === selectedEmpresa) {
+                option.style.display = 'block'; // Mostrar si es el departamento actual o pertenece a la empresa seleccionada
+            } else {
+                option.style.display = 'none'; // Ocultar si no coincide
+            }
+        });
+    });
+
+    // Filtrar departamentos según la empresa seleccionada al cargar la página
+    window.onload = function() {
+        var selectedEmpresa = document.getElementById('empresa').value.toUpperCase();
+        var departamentoSelect = document.getElementById('iddepartamento');
+        var opciones = departamentoSelect.querySelectorAll('option');
+        var departamentoActual = departamentoSelect.value; // Obtener el departamento actualmente seleccionado del usuario
+
+        console.log("Departamento actual al cargar: " + departamentoActual); // Depuración
+
+        opciones.forEach(function(option) {
+            var empresaOpcion = option.getAttribute('data-empresa');
+            console.log("Departamento: " + option.textContent + " | Empresa: " + empresaOpcion); // Depuración
+
+            // Mostrar el departamento actual o aquellos que coinciden con la empresa seleccionada
+            if (option.value === departamentoActual || empresaOpcion === selectedEmpresa) {
+                option.style.display = 'block'; // Mostrar si es el departamento actual o pertenece a la empresa seleccionada
+            } else {
+                option.style.display = 'none'; // Ocultar si no coincide
+            }
+        });
+    };
 </script>
 
 <?php

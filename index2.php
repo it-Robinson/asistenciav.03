@@ -1,5 +1,38 @@
+<?php
+session_start();
+header('Cache-Control: no-store, no-cache, must-revalidate');
+header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
+header('Pragma: no-cache');
+
+// Tiempo máximo de inactividad en segundos (5 minutos = 300 segundos)
+$tiempo_max_inactividad = 120;
+
+if (isset($_SESSION['ultima_actividad'])) {
+    // Calcular el tiempo de inactividad
+    $inactividad = time() - $_SESSION['ultima_actividad'];
+
+    if ($inactividad > $tiempo_max_inactividad) {
+        // Si el tiempo de inactividad supera el límite, destruir la sesión y redirigir al login
+        session_unset(); // Eliminar todas las variables de sesión
+        session_destroy(); // Destruir la sesión
+        header("Location: assistance/vistas/login.html"); // Redirigir al login
+        exit();
+    }
+}
+
+// Actualizar el tiempo de última actividad
+$_SESSION['ultima_actividad'] = time();
+
+// Verificar si la sesión está iniciada
+if (!isset($_SESSION['nombre'])) {
+    // Redirigir al login si no está autenticado
+    header("Location: assistance/vistas/login.html");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
-<html lang="en">
+<html lang="es">
 
 <head>
     <!-- basic -->
@@ -13,25 +46,30 @@
     <meta name="keywords" content="">
     <meta name="description" content="">
     <meta name="author" content="">
-      <!-- bootstrap css -->
-      <link rel="stylesheet" href="css/bootstrap.min.css">
-      <!-- style css -->
-      <link rel="stylesheet" href="css/style.css">
-      <!-- Responsive-->
-      <link rel="stylesheet" href="css/responsive.css">
-      <link rel="stylesheet" href="css/owl.carousel.min.css">
-      <!-- fevicon -->
-      <link rel="icon" href="images/icono.ico" type="image/gif" />
-      <!-- Scrollbar Custom CSS -->
-      <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
-      <!-- Tweaks for older IEs-->
-      <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
-      <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
-      <!--[if lt IE 9]>
+    <!-- bootstrap css -->
+    <link rel="stylesheet" href="css/bootstrap.min.css">
+    <!-- style css -->
+    <link rel="stylesheet" href="css/style.css">
+    <!-- Popup Cumpleaños -->
+    <link rel="stylesheet" href="css/popcumple.css">    
+    <!-- Responsive-->
+    <link rel="stylesheet" href="css/responsive.css">
+    <link rel="stylesheet" href="css/owl.carousel.min.css">
+    <!-- fevicon -->
+    <link rel="icon" href="images/icono.ico" type="image/gif" />
+    <!-- Scrollbar Custom CSS -->
+    <link rel="stylesheet" href="css/jquery.mCustomScrollbar.min.css">
+    <!-- Tweaks for older IEs-->
+    <link rel="stylesheet" href="https://netdna.bootstrapcdn.com/font-awesome/4.0.3/css/font-awesome.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/fancybox/2.1.5/jquery.fancybox.min.css" media="screen">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment.js/2.29.1/moment.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/moment-timezone/0.5.34/moment-timezone-with-data.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/fireworks-js@1.0.1/dist/fireworks.min.js"></script>
+    <!--[if lt IE 9]>
       <script src="https://oss.maxcdn.com/html5shiv/3.7.3/html5shiv.min.js"></script>
       <script src="https://oss.maxcdn.com/respond/1.4.2/respond.min.js"></script><![endif]-->
-   </head>
-   <style>
+
+    <style>
         .header_midil {
             padding: 20px 0;
         }
@@ -209,17 +247,148 @@
     display: flex;
     justify-content: flex-end;
 }
+.logout-btn {
+    background-color: red;
+    color: white;
+    padding: 10px 20px;
+    border-radius: 5px;
+    text-decoration: none;
+    display: inline-block;
+    font-weight: bold;
+}
+
+.logout-btn:hover {
+    background-color: darkred;
+}
+/* Ajustamos el tamaño del popup y le agregamos scroll */
+#birthdayPopup {
+    width: 90%;
+    max-width: 600px;
+    height: auto;
+    max-height: 80vh; /* Limitar la altura del popup para que no ocupe toda la pantalla */
+    margin: 20px auto;
+    background-color: white;
+    border-radius: 8px;
+    padding: 20px;
+    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.1);
+    overflow-y: auto; /* Habilitar el scroll vertical */
+}
+
+/* Lista de cumpleañeros */
+.birthday-list {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 15px; /* Espacio entre cada cumpleañero */
+    margin-bottom: 20px;
+}
+
+/* Tarjeta de cada cumpleañero */
+.birthday-person {
+    display: flex;
+    align-items: center;
+    background-color: #f9f9f9;
+    border-radius: 10px;
+    padding: 15px;
+    width: 100%;
+    max-width: 500px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+}
+
+/* Imagen más grande y ajustada */
+.birthday-image {
+    width: 100px; /* Imagen más grande */
+    height: 100px;
+    border-radius: 50%;
+    margin-right: 15px;
+    object-fit: cover; /* Asegura que la imagen no se deforme */
+}
+
+/* Información de cada cumpleañero */
+.birthday-info {
+    font-size: 14px;
+    line-height: 1.5;
+}
+
+/* Estilos para el título */
+h2 {
+    text-align: center;
+    color: #f39c12;
+}
+
+/* Estilos para el texto general */
+p {
+    text-align: center;
+    font-size: 16px;
+    color: #555;
+}
+/* Estilo para el mini-popup */
+.scroll-message-popup {
+    position: absolute; /* Ahora será absoluto dentro del contenedor */
+    left: 50%;
+    transform: translateX(-50%);
+    background-color: rgba(0, 0, 0, 0.7);
+    color: #fff;
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 14px;
+    text-align: center;
+    z-index: 9999; /* Asegurarnos de que siempre esté encima */
+    display: none; /* Oculto por defecto */
+}
+
+/* Estilo para el botón de cierre ("Cerrar") */
+.close {
+    position: absolute;
+    top: 10px;
+    right: 10px;
+    padding: 10px 20px;
+    font-size: 16px;
+    background-color: #ff3b3b; /* Color rojo para que resalte */
+    color: #ff3b3b; /* Texto blanco */
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    z-index: 100; /* Asegurarnos de que esté al frente */
+}
+
+.close:hover {
+    background-color: #e74c3c; /* Cambiar a un rojo más oscuro cuando pases el mouse */
+    color: #fff; /* Texto blanco */
+}
+
+.close:focus {
+    outline: none; /* Evitar el borde azul cuando está enfocado */
+}
+
+
 
     </style>
 
-   <body class="main-layout">
-      <!-- loader  -->
-      <div class="loader_bg">
-         <div class="loader"><img src="images/loading.gif" alt="#" /></div>
-      </div>
-      <!-- end loader -->
-      <!-- header -->
-      <header>
+</head>
+<!-- body -->
+
+<body class="main-layout">
+    <div id="birthdayPopup" class="popup">
+        <div class="popup-content">
+        <button class="close">Close</button>
+
+            <div id="scrollMessagePopup" class="scroll-message-popup">⬇️ Desplázate hacia abajo para ver más ⬇️</div> <!-- Mini-popup -->
+
+            <p id="birthdayMessage"></p>
+        </div>
+    </div>
+
+
+
+
+    <!-- loader  -->
+    <div class="loader_bg">
+        <div class="loader"><img src="images/loading.gif" alt="#" /></div>
+    </div>
+    <!-- end loader -->
+    <!-- header -->
+    <header>
         <!-- header inner -->
         <div class="header">
         <div class="header_midil">
@@ -249,7 +418,7 @@
                             </button>
                             <div class="collapse navbar-collapse" id="navbarsExample04">
                                 <ul class="navbar-nav mr-auto">
-                                    <li class="nav-item ">
+                                    <li class="nav-item active">
                                         <a class="nav-link" href="index2">Home</a>
                                     </li>
                                     <li class="nav-item">
@@ -273,15 +442,17 @@
                                         </a>
                                         <div class="dropdown-menu" aria-labelledby="navbarDropdown">
                                             <div class="dropdown-submenu">
+                                                <a class="dropdown-item" href="team/itl/administrativearea">Administrative area</a>
                                                 <a class="dropdown-item dropdown-toggle" href="#">ITL</a>
                                                 <div class="dropdown-menu">
-                                                    <a class="dropdown-item" href="team/itl/presuit">Presuit</a>
+                                                    <a class="dropdown-item" href="team/itl/presuit">Settlement</a>
+                                                    <a class="dropdown-item" href="team/itl/HOS">HOS</a>
                                                     <a class="dropdown-item" href="team/itl/filing">Filing</a>
-                                                    <a class="dropdown-item" href="team/itl/legal">Legal Assistant</a>
+                                                    <a class="dropdown-item" href="team/itl/legalassistant">Legal Assistant</a>
+                                                    <a class="dropdown-item" href="team/itl/scheduling">Scheduling</a>
                                                     <a class="dropdown-item" href="team/itl/release">Release</a>
                                                     <a class="dropdown-item" href="team/itl/uploading">Uploading</a>
-                                                    <a class="dropdown-item" href="team/itl/accounting">Accounting Assistant</a>
-                                                    <a class="dropdown-item" href="team/itl/customer">Customer Service</a>
+                                                    <a class="dropdown-item" href="team/itl/account">Account</a>
                                                 </div>
                                             </div>
                                             <div class="dropdown-submenu">
@@ -290,17 +461,23 @@
                                                     <a class="dropdown-item" href="team/claimpay/operations">Operations</a>
                                                     <a class="dropdown-item" href="team/claimpay/finance">Finance</a>
                                                     <a class="dropdown-item" href="team/claimpay/revenue">Revenue</a>
-                                                    <a class="dropdown-item" href="team/claimpay/underwriting">Underwriting</a> 
+                                                    <a class="dropdown-item" href="team/claimpay/underwriting">Underwriting</a>                                                    
                                                 </div>
                                             </div>
                                         </div>
                                     </li>
                                     <li class="nav-item">
-                                        <a class="nav-link" href="assistance/vistas/login">Remote assistance</a>
+                                        <a class="nav-link" href="assistance/vistas/escritorio">Remote assistance</a>
                                     </li>
-                                    <li class="nav-item active">
+                                    <!--
+                                    <li class="nav-item">
                                         <a class="nav-link" href="contact">contact</a>
                                     </li>
+-->
+                                    <li class="nav-item">
+    <a href="assistance/ajax/usuario.php?op=salir" class="nav-link logout-btn">Log out</a>
+</li>
+
                                 </ul>
                             </div>
                         </nav>
@@ -309,47 +486,36 @@
             </div>
         </div>
     </header>
-      <!-- end header inner -->
-      <!-- end header -->
- 
-      <!-- contact  section -->
-      <div id="contact" class="contact ">
-         <div class="container">
+    <!-- end header inner -->
+    <!-- end header -->
+    <!-- banner -->
+    <section class="banner_main">
+        <div class="container">
             <div class="row">
-               <div class="col-md-12">
-                  <div class="titlepage">
-                     <h2><strong class="yellow">Contact us</strong><br>Request a call back</h2>
-                  </div>
-               </div>
+                <div class="col-md-7 col-lg-7">
+                    <div class="text-bg">
+                        <h1>Welcome to the Human Resources System of <br>ITL and ClaimPay</h1>
+                        <span></span>
+                        <p>Hello everyone,
+
+                            We are pleased to welcome you to our new Human Resources System. Here you will be able to manage attendance, check news, events, and access company rules and policies.
+
+                            We hope this system will enhance your work experience. If you need assistance, please do not hesitate to contact the Human Resources team.
+
+                            Thank you and welcome!
+                        </p>
+                        <a href="#">ITL and ClaimPay Human Resources Team</a>
+                    </div>
+                </div>
+                <div class="col-md-5 col-lg-5">
+                    <div class="ban_img">
+                        <figure><img src="images/ba_ing.png" alt="#" /></figure>
+                    </div>
+                </div>
             </div>
-            <div class="row">
-               <div class="col-md-8 offset-md-2">
-                  <form id="post_form" class="contact_form">
-                     <div class="row">
-                        <div class="col-md-12 ">
-                           <input class="contact_control" placeholder=" Name" type="type" name="Name"> 
-                        </div>
-                        <div class="col-md-12">
-                           <input class="contact_control" placeholder="Email" type="type" name="Email"> 
-                        </div>
-                        <div class="col-md-12">
-                           <input class="contact_control" placeholder="Phone Number " type="type" name="Phone Number ">                          
-                        </div>
-                        <div class="col-md-12">
-                           <textarea class="textarea" placeholder="Message" type="type" Message="Name">Message </textarea>
-                        </div>
-                        <div class="col-md-12">
-                           <button class="send_btn">Send</button>
-                        </div>
-                  </form>
-                  </div>
-               </div>
-            </div>
-         </div>
-      </div>
-      <!-- end contact  section -->
-      <!--  footer -->
-      <footer>
+        </div>
+    </section>
+    <footer>
         <div class="footer">
             <div class="container">
                 <div class="row">
@@ -383,7 +549,7 @@
                     <div class="col-lg-2 col-md-6 col-sm-6">
                         <h3>Menus</h3>
                         <ul class="link_icon">
-                            <li><a href="index2" class="dropdown-item ">Home</a></li>
+                            <li><a href="index2" class="dropdown-item active">Home</a></li>
                             <li><a href="news/news" class="dropdown-item">News</a></li>
                             <li><a href="calendar/calendar" class="dropdown-item">Calendar</a></li>
                             <li class="dropdown-submenu">
@@ -399,15 +565,17 @@
                                 <a href="#" class="dropdown-toggle dropdown-item" data-toggle="dropdown">Team</a>
                                 <ul class="dropdown-menu">
                                     <li class="dropdown-submenu">
+                                         <a class="dropdown-item" href="team/itl/administrativearea">Administrative area</a>
                                         <a href="#" class="dropdown-toggle dropdown-item" data-toggle="dropdown">ITL</a>
                                         <ul class="dropdown-menu">
-                                            <li><a class="dropdown-item" href="team/itl/presuit">Presuit</a></li>
+                                            <li><a class="dropdown-item" href="team/itl/presuit">Settlement</a></li>
+                                            <li><a class="dropdown-item" href="team/itl/HOS">HOS</a></li>
                                             <li><a class="dropdown-item" href="team/itl/filing">Filing</a></li>
-                                            <li><a class="dropdown-item" href="team/itl/legal">Legal Assistant</a></li>
+                                            <li><a class="dropdown-item" href="team/itl/legalassistant">Legal Assistance</a></li>
+                                            <li><a class="dropdown-item" href="team/itl/scheduling">Scheduling</a></li>
                                             <li><a class="dropdown-item" href="team/itl/release">Release</a></li>
                                             <li><a class="dropdown-item" href="team/itl/uploading">Uploading</a></li>
-                                            <li><a class="dropdown-item" href="team/itl/accounting">Accounting Assistant</a></li>
-                                            <li><a class="dropdown-item" href="team/itl/customer">Customer Service</a></li>
+                                            <li><a class="dropdown-item" href="team/itl/account">Account</a></li>
                                         </ul>
                                     </li>
                                     <li class="dropdown-submenu">
@@ -422,7 +590,9 @@
                                 </ul>
                             </li>
                             <li><a href="assistance/vistas/escritorio" class="dropdown-item">Remote assistance</a></li>
-                            <li><a href="contact" class="dropdown-item active">Contact</a></li>
+                            <!--
+                            <li><a href="contact" class="dropdown-item ">Contact</a></li>
+-->
                         </ul>
                     </div>
                 </div>
@@ -438,17 +608,17 @@
             </div>
         </div>
     </footer>
-      <!-- end footer -->
-      <!-- Javascript files-->
-      <script src="js/jquery.min.js"></script>
-      <script src="js/popper.min.js"></script>
-      <script src="js/bootstrap.bundle.min.js"></script>
-      <script src="js/jquery-3.0.0.min.js"></script>
-      <script src="js/owl.carousel.min.js"></script>
-      <!-- sidebar -->
-      <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
-      <script src="js/custom.js"></script>
-      <script>
+    <!-- end footer -->
+    <!-- Javascript files-->
+    <script src="js/jquery.min.js"></script>
+    <script src="js/popper.min.js"></script>
+    <script src="js/bootstrap.bundle.min.js"></script>
+    <script src="js/jquery-3.0.0.min.js"></script>
+    <script src="js/owl.carousel.min.js"></script>
+    <!-- sidebar -->
+    <script src="js/jquery.mCustomScrollbar.concat.min.js"></script>
+    <script src="js/custom.js"></script>
+    <script>
         // Handles the hover and click events for the submenus
         $(document).ready(function() {
             $('.dropdown-submenu a.dropdown-toggle').on('click', function(e) {
@@ -464,5 +634,9 @@
             });
         });
     </script>
-   </body>
+        <canvas id="fireworks"></canvas>
+        <script src="js/popcumple.js"></script>
+
+</body>
+
 </html>

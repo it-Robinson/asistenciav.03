@@ -119,19 +119,19 @@ public function verificar($login, $clave)
     }
 
     // Método para actualizar los datos del usuario
-    public function editar_usuario($idusuario, $nombre, $apellidos, $email, $imagen, $iddepartamento,$idtipousuario, $fecha_nacimiento, $tipo_turno, $empresa, $extension, $primary_phone_number) {
+    public function editar_usuario($idusuario, $nombre, $apellidos, $email, $imagen, $fecha_nacimiento, $tipo_turno, $extension, $primary_phone_number) {
         global $conexion; // Usamos la conexión a la base de datos correctamente
     
         // Inicializar consulta SQL
         $sql = "UPDATE usuarios 
-                SET nombre = ?, apellidos = ?, email = ?, imagen = ?, iddepartamento = ?, idtipousuario=?,fecha_nacimiento = ?, tipo_turno = ?, empresa = ?, extension = ?, primary_phone_number = ? 
+                SET nombre = ?, apellidos = ?, email = ?, imagen = ?,fecha_nacimiento = ?, tipo_turno = ?, extension = ?, primary_phone_number = ? 
                 WHERE idusuario = ?";
     
         // Preparar la consulta
         $stmt = $conexion->prepare($sql);
     
         // Enlazar parámetros (actualizando la cadena de tipos a 11 parámetros)
-        $stmt->bind_param("ssssiisssssi", $nombre, $apellidos, $email, $imagen, $iddepartamento, $idtipousuario,$fecha_nacimiento, $tipo_turno, $empresa, $extension, $primary_phone_number, $idusuario);
+        $stmt->bind_param("ssssssssi", $nombre, $apellidos, $email, $imagen,$fecha_nacimiento, $tipo_turno, $extension, $primary_phone_number, $idusuario);
     
         // Ejecutar la consulta
         if ($stmt->execute()) {
@@ -144,7 +144,7 @@ public function verificar($login, $clave)
     // Método para obtener los departamentos
     public function obtener_departamentos() {
         global $conexion;
-        $sql = "SELECT iddepartamento, nombre FROM departamento";
+        $sql = "SELECT iddepartamento, nombre,descripcion FROM departamento";
         $query = $conexion->query($sql);
 
         // Verificar si hay errores en la consulta
