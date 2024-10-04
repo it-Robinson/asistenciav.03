@@ -9,13 +9,17 @@ if (!isset($_SESSION['nombre'])) {
     exit;
 } else {
     require 'header.php'; // Incluir la cabecera
-    require_once('../modelos/Usuario.php'); // Modelo de usuario, donde está obtener_departamentos()
+    require_once('../modelos/Usuario.php'); // Modelo de usuario
 
     $usuario = new Usuario();
     $idusuario = $_SESSION['idusuario'];
-    $departamentos = $usuario->obtener_departamentos(); 
+    $departamentos = $usuario->obtener_departamentos();
     $tipousuarios = $usuario->obtener_tipousuarios();
 
+    // Define el tamaño máximo permitido en bytes (por ejemplo, 2MB)
+    $maxFileSize = 2 * 1024 * 1024; // 2 MB
+    // Define los formatos permitidos
+    $allowedFormats = ['jpg', 'jpeg', 'png', 'gif'];
 
     if ($_SERVER['REQUEST_METHOD'] == 'POST') {
         $nombre = $_POST['nombre'];
@@ -29,16 +33,28 @@ if (!isset($_SESSION['nombre'])) {
         $empresa = $_POST['empresa'];
         $extension = $_POST['extension'];
         $primary_phone_number = $_POST['primary_phone_number'];
-        
 
         if ($imagen) {
-            $target_dir = "../files/usuarios/";
-            $target_file = $target_dir . basename($imagen);
-            move_uploaded_file($_FILES['imagen']['tmp_name'], $target_file);
+            $fileSize = $_FILES['imagen']['size'];
+            $fileExtension = strtolower(pathinfo($imagen, PATHINFO_EXTENSION));
+
+            // Verificar el tamaño del archivo
+            if ($fileSize > $maxFileSize) {
+                echo "<script>alert('El archivo es demasiado grande. El tamaño máximo es 2MB.');</script>";
+            }
+            // Verificar el formato del archivo
+            elseif (!in_array($fileExtension, $allowedFormats)) {
+                echo "<script>alert('Formato de archivo no permitido. Solo se permiten JPG, PNG y GIF.');</script>";
+            } else {
+                $target_dir = "../files/usuarios/";
+                $target_file = $target_dir . basename($imagen);
+                move_uploaded_file($_FILES['imagen']['tmp_name'], $target_file);
+            }
         } else {
             $imagen = $_SESSION['imagen'];
         }
 
+        // Actualización del usuario
         $usuario->editar_usuario($idusuario, $nombre, $apellidos, $email, $imagen, $fecha_nacimiento, $tipo_turno, $extension, $primary_phone_number);
 
         $_SESSION['nombre'] = $nombre;
@@ -128,7 +144,6 @@ h2 {
     background-color: #1e7e34;  /* Color al hacer clic */
 }
 
-
 /* Hacer los iconos un poco más grandes */
 .form-label i {
     font-size: 1.5rem; /* Aumentamos el tamaño de los íconos */
@@ -159,6 +174,7 @@ h2 {
         padding: 12px 20px;
     }
 }
+
 /* Ajuste para los elementos <select> con la clase form-select */
 .form-select {
     font-size: 1.5rem;  /* Aumenta el tamaño de la fuente */
@@ -168,6 +184,7 @@ h2 {
     width: 100%; /* Para asegurarse de que ocupe todo el ancho disponible */
     height: auto; /* Ajusta la altura automáticamente al nuevo contenido */
 }
+
 .custom-alert {
     background-color: #007bff; /* Fondo azul */
     color: white;              /* Texto blanco */
@@ -180,18 +197,16 @@ h2 {
 
 <!-- Contenido HTML dentro de la estructura principal -->
 <div class="content-wrapper">
-    <!-- Main content -->
     <section class="content">
         <div class="container mt-5">
             <h2 class="mb-4">Editar Perfil <i class="fas fa-user-edit"></i></h2>
 
-
-<!-- Mostrar mensaje de éxito -->
-<?php if (isset($_GET['success'])): ?>
-    <div class="custom-alert alert " id="successMessage">
-        Perfil actualizado correctamente.
-    </div>
-<?php endif; ?>
+            <!-- Mostrar mensaje de éxito -->
+            <?php if (isset($_GET['success'])): ?>
+                <div class="custom-alert alert " id="successMessage">
+                    Perfil actualizado correctamente.
+                </div>
+            <?php endif; ?>
 
             <!-- Formulario para editar el perfil -->
             <form action="editar_perfil.php" method="POST" enctype="multipart/form-data">
@@ -257,68 +272,41 @@ h2 {
                             <option value="Claimpay" <?php echo ($reg->empresa == 'Claimpay') ? 'selected' : ''; ?>>Claimpay</option>
                         </select>
                     </div>
-                    
                 </div>
 
                 <div class="row g-3 mt-3">
                     <!-- Campo Departamento -->
                     <div class="col-md-6">
-                    <label for="iddepartamento" class="form-label">Departamento <i class="fas fa-sitemap"></i></label>
-    <select name="iddepartamento" id="iddepartamento" class="form-select" disabled>
-        <?php while ($row = $departamentos->fetch_object()): ?>
-            <option value="<?php echo $row->iddepartamento; ?>" 
-                data-empresa="<?php echo strtoupper(trim($row->descripcion)); ?>"
-                <?php echo ($reg->iddepartamento == $row->iddepartamento) ? 'selected' : ''; ?>>
-                <?php echo htmlspecialchars($row->nombre); ?>
-            </option>
-        <?php endwhile; ?>
-    </select>
-                        <br>
-                        <br>
-                                          <!-- Campo Puesto -->  
-<label for="idtipousuario" class="form-label">Puesto <i class="fas fa-sitemap"></i></label>
-<select name="idtipousuario" id="idtipousuario" class="form-select"  disabled>
-    <?php while ($row = $tipousuarios->fetch_object()): ?>
-        <?php 
-            // Lista de puestos a ocultar, pero que se mostrarán si el usuario tiene ese puesto
-            $puestosOcultos = ['Team Leader', 'IT Support', 'HR Manager', 'empleado', 'Receptionist'];
-
-            // Si el puesto está en la lista de ocultos Y el usuario no tiene ese puesto, se omite
-            if (in_array($row->nombre, $puestosOcultos) && $_SESSION['tipousuario'] != $row->nombre) {
-                continue;
-            }
-        ?>
-        <!-- Mostrar la opción si no está en la lista de ocultos, o si el usuario tiene ese puesto -->
-        <option value="<?php echo $row->idtipousuario; ?>" 
-            <?php echo ($reg->idtipousuario == $row->idtipousuario) ? 'selected' : ''; ?>>
-            <?php echo htmlspecialchars($row->nombre); ?>
-        </option>
-    <?php endwhile; ?>
-</select>
-
-
+                        <label for="iddepartamento" class="form-label">Departamento <i class="fas fa-sitemap"></i></label>
+                        <select name="iddepartamento" id="iddepartamento" class="form-select" disabled>
+                            <?php while ($row = $departamentos->fetch_object()): ?>
+                                <option value="<?php echo $row->iddepartamento; ?>" 
+                                    data-empresa="<?php echo strtoupper(trim($row->descripcion)); ?>"
+                                    <?php echo ($reg->iddepartamento == $row->iddepartamento) ? 'selected' : ''; ?>>
+                                    <?php echo htmlspecialchars($row->nombre); ?>
+                                </option>
+                            <?php endwhile; ?>
+                        </select>
                     </div>
 
                     <!-- Campo Imagen de Perfil -->
                     <div class="form-group col-lg-6 col-md-6 col-xs-12">
-                                        <label for="imagen" class="form-label">Imagen de Perfil<i class="fas fa-image"></i></label>
-                                        <input type="file" class="form-control-file" id="imagen" name="imagen">
-                                        <div class="mt-3">
-                                            <p class="form-label">Imagen Actual:</p>
-                                            <img src="../files/usuarios/<?php echo $reg->imagen; ?>" alt="Imagen de Perfil" style="width: 100px; height: 100px;">
-                                        </div>
-                                    </div>
+                        <label for="imagen" class="form-label">Imagen de Perfil <i class="fas fa-image"></i></label>
+                        <input type="file" class="form-control-file" id="imagen" name="imagen">
+                        <div class="mt-3">
+                            <p class="form-label">Imagen Actual:</p>
+                            <img src="../files/usuarios/<?php echo $reg->imagen; ?>" alt="Imagen de Perfil" style="width: 100px; height: 100px;">
+                        </div>
+                    </div>
                 </div>
 
                 <button type="submit" class="btn btn-guardar mt-4">
-    <i class="fas fa-save"></i> Guardar Cambios
-</button>
-
+                    <i class="fas fa-save"></i> Guardar Cambios
+                </button>
             </form>
         </div>
     </section>
 </div>
-
 
 <!-- Agregamos JavaScript para ocultar el mensaje de éxito después de 3 segundos -->
 <script>
@@ -330,51 +318,27 @@ h2 {
             }, 3000);
         }
     });
-</script>
-<script>
-    document.getElementById('empresa').addEventListener('change', function() {
-        var selectedEmpresa = this.value.toUpperCase(); // Convertimos a mayúsculas para hacer la coincidencia con 'data-empresa'
-        var departamentoSelect = document.getElementById('iddepartamento');
-        var opciones = departamentoSelect.querySelectorAll('option');
 
-        var departamentoActual = departamentoSelect.value; // Capturar el departamento seleccionado actualmente
-        console.log("Departamento actual: " + departamentoActual); // Depuración
+    // Validación de formato y tamaño de la imagen en el frontend
+    document.getElementById('imagen').addEventListener('change', function() {
+        const file = this.files[0];
+        const allowedFormats = ['image/jpeg', 'image/png', 'image/gif'];
+        const maxFileSize = 2 * 1024 * 1024; // 2 MB
 
-        // Mostrar u ocultar opciones de departamentos según la empresa seleccionada
-        opciones.forEach(function(option) {
-            var empresaOpcion = option.getAttribute('data-empresa');
-            console.log("Departamento: " + option.textContent + " | Empresa: " + empresaOpcion); // Depuración
-
-            // Mostrar el departamento actual o aquellos que coinciden con la empresa seleccionada
-            if (option.value === departamentoActual || empresaOpcion === selectedEmpresa) {
-                option.style.display = 'block'; // Mostrar si es el departamento actual o pertenece a la empresa seleccionada
-            } else {
-                option.style.display = 'none'; // Ocultar si no coincide
+        if (file) {
+            // Verificar el tipo de archivo
+            if (!allowedFormats.includes(file.type)) {
+                alert('Formato no permitido. Solo se permiten imágenes JPEG, PNG y GIF.');
+                this.value = ''; // Limpiar el campo de archivo
             }
-        });
+
+            // Verificar el tamaño del archivo
+            if (file.size > maxFileSize) {
+                alert('El archivo es demasiado grande. El tamaño máximo es 2MB.');
+                this.value = ''; // Limpiar el campo de archivo
+            }
+        }
     });
-
-    // Filtrar departamentos según la empresa seleccionada al cargar la página
-    window.onload = function() {
-        var selectedEmpresa = document.getElementById('empresa').value.toUpperCase();
-        var departamentoSelect = document.getElementById('iddepartamento');
-        var opciones = departamentoSelect.querySelectorAll('option');
-        var departamentoActual = departamentoSelect.value; // Obtener el departamento actualmente seleccionado del usuario
-
-        console.log("Departamento actual al cargar: " + departamentoActual); // Depuración
-
-        opciones.forEach(function(option) {
-            var empresaOpcion = option.getAttribute('data-empresa');
-            console.log("Departamento: " + option.textContent + " | Empresa: " + empresaOpcion); // Depuración
-
-            // Mostrar el departamento actual o aquellos que coinciden con la empresa seleccionada
-            if (option.value === departamentoActual || empresaOpcion === selectedEmpresa) {
-                option.style.display = 'block'; // Mostrar si es el departamento actual o pertenece a la empresa seleccionada
-            } else {
-                option.style.display = 'none'; // Ocultar si no coincide
-            }
-        });
-    };
 </script>
 
 <?php
