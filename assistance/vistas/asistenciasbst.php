@@ -194,12 +194,20 @@ document.addEventListener('DOMContentLoaded', function() {
 
     // Escuchar clic en el botón de envío
     submitButton.addEventListener('click', function() {
-        // Redirigir a asistencia.php después de 3 segundos (3000 milisegundos)
+      const today = new Date().toISOString().split('T')[0];  // Obtenemos la fecha en formato 'YYYY-MM-DD'
+
+        // Guardar en localStorage para bloquear "Entrada de Turno" y "Salida de Turno"
+        localStorage.setItem('salidaTurnoBloqueadaSinBreak', 'true');
+        localStorage.setItem('fechaBloqueoSinBreak', today);  // Guardamos la fecha actual
+
+
+        // Redirigir a asistencia.php después de 3 segundos
         setTimeout(function() {
-            window.location.href = 'asistenciasnbreak.php';
-        }, 3000); 
+            window.location.href = 'asistenciasnbreak.php'; // Actualizar con la URL correcta si es diferente
+        }, 3000);
     });
 });
+
 </script>
 
 <script>

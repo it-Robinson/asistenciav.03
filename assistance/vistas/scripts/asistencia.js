@@ -130,7 +130,7 @@ function listar() {
         },
         "bDestroy": true,
         "iDisplayLength": 10,
-        "order": [[0, "asc"]]
+        "order": [[1, "asc"]]
     }).DataTable();
 }
 

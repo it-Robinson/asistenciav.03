@@ -172,11 +172,11 @@ h4 {
             <h4>Por favor presionar sobre el botón</h4>
             </div>
             <form action="" name="formulario" id="formulario" method="POST">
-                <input type="hidden" name="codigo_persona" id="codigo_persona" value="<?php echo htmlspecialchars($user_id); ?>" required>
-                <button id="submitButton" type="submit" class="btn-asistencia">
-                    <i class="fas fa-fingerprint"></i>
-                </button>
-            </form>
+    <input type="hidden" name="codigo_persona" id="codigo_persona" value="<?php echo htmlspecialchars($user_id); ?>" required>
+    <button id="submitButton" type="submit" class="btn-asistencia">
+        <i class="fas fa-coffee"></i>
+    </button>
+</form>
         </div>
     </div>
 
@@ -190,16 +190,20 @@ h4 {
 
 <script>
 document.addEventListener('DOMContentLoaded', function() {
-    // Seleccionar el botón de envío
     const submitButton = document.getElementById('submitButton');
+    const buttonId = 'btn-entrada-break'; // Identificador único para este botón
 
-    // Escuchar clic en el botón de envío
-    submitButton.addEventListener('click', function() {
-        // Redirigir a asistencia.php después de 3 segundos (3000 milisegundos)
-        setTimeout(function() {
-            window.location.href = 'asistencia_inicio.php';
-        }, 3000); 
-    });
+    if (submitButton) {
+        submitButton.addEventListener('click', function() {
+            // Bloquea el botón correspondiente en la página principal
+            localStorage.setItem(`btn-bloqueado-${buttonId}`, 'true');
+
+            // Redirige después de 3 segundos
+            setTimeout(function() {
+                window.location.href = 'asistencia_inicio.php'; // Regresa a la página principal
+            }, 3000);
+        });
+    }
 });
 </script>
 

@@ -9,7 +9,7 @@ header('Expires: Sat, 26 Jul 1997 05:00:00 GMT');
 header('Pragma: no-cache');
 
 // Tiempo máximo de inactividad en segundos (10 segundos en este caso)
-$tiempo_max_inactividad = 120;
+$tiempo_max_inactividad = 1200;
 
 if (isset($_SESSION['ultima_actividad'])) {
     // Calcular el tiempo de inactividad
@@ -169,7 +169,7 @@ if (!isset($_SESSION['nombre'])) {
         <!-- Header Navbar: style can be found in header.less -->
         <nav class="navbar navbar-static-top">
             <!-- Sidebar toggle button-->
-            <a href="#" class="sidebar-toggle" data-toggle="offcanvas" role="button"></a>
+            <a href="#" id="sidebarToggle" class="sidebar-toggle" data-toggle="offcanvas" role="button"></a>
             <div class="navbar-custom-menu">
                 <ul class="nav navbar-nav">
                     <li class="dropdown user user-menu">

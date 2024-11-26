@@ -166,7 +166,47 @@
           }
       }
   </script>
-  
+  <script>
+    const input = document.getElementById("logina");
+    
+    // Elimina espacios automáticamente
+    input.addEventListener("input", function() {
+        this.value = this.value.replace(/\s/g, "");
+    });
+    
+    // Valida al enviar el formulario
+    document.getElementById("formLogin").addEventListener("submit", function(e) {
+        if (/\s/.test(input.value)) {
+            e.preventDefault(); // Detiene el envío
+            alert("El campo Usuario no puede contener espacios.");
+            input.focus();
+        }
+    });
+    </script>
+    <script>
+      const passwordInput = document.getElementById("clavea");
+      
+      // Elimina espacios automáticamente mientras el usuario escribe
+      passwordInput.addEventListener("input", function() {
+          this.value = this.value.replace(/\s/g, "");
+      });
+      
+      // Prevenir la barra espaciadora al escribir
+      passwordInput.addEventListener("keydown", function(e) {
+          if (e.key === " ") {
+              e.preventDefault();
+          }
+      });
+      
+      // Validar al enviar el formulario
+      document.getElementById("formLogin").addEventListener("submit", function(e) {
+          if (/\s/.test(passwordInput.value)) {
+              e.preventDefault(); // Detiene el envío
+              alert("La contraseña no puede contener espacios.");
+              passwordInput.focus();
+          }
+      });
+      </script>
   </section>
   </body>
 </html> 

@@ -102,6 +102,15 @@ h4 {
 .ticket-buttons {
   text-align: center; /* Centramos los botones */
 }
+.disabled-button {
+        opacity: 0.6; /* Reduce opacidad para botones deshabilitados */
+        color: white !important; /* Asegura que el texto siga siendo visible */
+        background-color: #ccc !important; /* Cambia el fondo a gris */
+        pointer-events: none; /* Desactiva clics */
+        cursor: not-allowed; /* Cambia el cursor */
+}
+
+
 </style>
 
 <div class="content-wrapper">
@@ -150,10 +159,11 @@ h4 {
                 <h4>**Solo seleccionar una vez:**</h4>
               </div>
               <div class="ticket-buttons">
-    <a href="asistenciaet.php" class="btn btn-success btn-ticket" id="btn-entrada-turno" style="color: white;">Entrada de Turno</a>
-    <a href="asistenciaeb.php" class="btn btn-info btn-ticket" id="btn-entrada-break" style="color: white;">Entrada de Break</a>
-    <a href="asistenciasb.php" class="btn btn-warning btn-ticket" id="btn-salida-break" style="color: white;">Salida de Break</a>
-    <a href="asistenciast.php" class="btn btn-danger btn-ticket" id="btn-salida-turno" style="color: white;">Salida de Turno</a>
+<a href="asistenciaet.php" class="btn btn-success btn-ticket" id="btn-entrada-turno" data-id="btn-entrada-turno" style="color: white;">Entrada de Turno</a>
+<a href="asistenciaeb.php" class="btn btn-info btn-ticket" id="btn-entrada-break" data-id="btn-entrada-break" style="color: white;">Entrada de Break</a>
+<a href="asistenciasb.php" class="btn btn-warning btn-ticket" id="btn-salida-break" data-id="btn-salida-break" style="color: white;">Salida de Break</a>
+<a href="asistenciast.php" class="btn btn-danger btn-ticket" id="btn-salida-turno" data-id="btn-salida-turno" style="color: white;">Salida de Turno</a>
+
 </div>
             </div>
           </div>
@@ -194,59 +204,53 @@ document.addEventListener("DOMContentLoaded", function() {
 });
 </script>
 
+
 <script>
 document.addEventListener("DOMContentLoaded", function() {
     const buttons = ['btn-entrada-turno', 'btn-entrada-break', 'btn-salida-break', 'btn-salida-turno'];
 
-    // Obtener la fecha actual
-    const today = new Date().toISOString().split('T')[0];
-
-    // Comprobar si la fecha almacenada es diferente a la actual
-    const storedDate = localStorage.getItem('date');
-    if (!storedDate || storedDate !== today) {
-        // Si la fecha es diferente o no existe, restablecer los botones
-        buttons.forEach(buttonId => {
-            localStorage.removeItem(buttonId);
-        });
-        // Actualizar la fecha en localStorage
-        localStorage.setItem('date', today);
+    // Función para bloquear un botón
+    function bloquearBoton(buttonId) {
+        const button = document.querySelector(`[data-id="${buttonId}"]`);
+        if (button) {
+            button.classList.add('disabled-button');
+            button.style.pointerEvents = 'none'; // Deshabilita clics
+            button.style.cursor = 'not-allowed'; // Cambia el cursor
+            localStorage.setItem(`btn-bloqueado-${buttonId}`, 'true'); // Guarda el estado bloqueado
+        }
     }
 
-    // Deshabilitar los botones si están en localStorage
-    buttons.forEach(buttonId => {
-        const button = document.getElementById(buttonId);
-        if (localStorage.getItem(buttonId) === 'disabled') {
-            button.setAttribute('disabled', 'disabled');
-            button.classList.add('disabled-button');
+    // Limpieza de los estados de los botones si cambia el día
+    const today = new Date().toISOString().split('T')[0];
+    const storedDate = localStorage.getItem('date');
+    if (!storedDate || storedDate !== today) {
+        // Restablece todos los botones
+        buttons.forEach(buttonId => {
+            const button = document.querySelector(`[data-id="${buttonId}"]`);
+            if (button) {
+                button.classList.remove('disabled-button');
+                button.style.pointerEvents = 'auto';
+                button.style.cursor = 'pointer';
+                localStorage.removeItem(`btn-bloqueado-${buttonId}`);
+            }
+        });
+        localStorage.setItem('date', today); // Guarda la fecha actual en localStorage
+    }
 
-            // Asegurarse de que el botón no sea clickeable
-            button.style.pointerEvents = 'none';
+    // Bloquea los botones según el estado almacenado en localStorage
+    buttons.forEach(buttonId => {
+        const isBlocked = localStorage.getItem(`btn-bloqueado-${buttonId}`) === 'true';
+        if (isBlocked) {
+            bloquearBoton(buttonId);
         }
     });
-
-    // Manejar el clic en los botones
-    buttons.forEach(buttonId => {
-        const button = document.getElementById(buttonId);
-        button.addEventListener('click', function(event) {
-            event.preventDefault();
-
-            // Deshabilitar el botón y guardar el estado en localStorage
-            button.setAttribute('disabled', 'disabled');
-            button.classList.add('disabled-button');
-            localStorage.setItem(buttonId, 'disabled');
-
-            // Asegurarse de que el botón no sea clickeable
-            button.style.pointerEvents = 'none';
-
-            setTimeout(() => {
-                window.location.href = button.href;
-            }, 100);
-        });
-    });
 });
-
-
 </script>
+
+
+
+
+
 
 
 

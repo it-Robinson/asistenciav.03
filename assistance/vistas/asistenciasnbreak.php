@@ -160,8 +160,8 @@ h4 {
   
 
 <div class="ticket-buttons">
-<a href="asistenciasbet.php" class="btn btn-success btn-ticket" data-ticket="Entrada de Turno" style="color: white;">Entrada de Turno</a>
-<a href="asistenciasbst.php" class="btn btn-danger btn-ticket" data-ticket="Salida de Turno" style="color: white;">Salida de Turno</a>
+<a href="asistenciasbet.php" class="btn btn-success btn-ticket" id='btn-entrada-turno-sb' data-ticket="Entrada de Turno" style="color: white;">Entrada de Turno</a>
+<a href="asistenciasbst.php" class="btn btn-danger btn-ticket" id='btn-salida-turno-sb' data-ticket="Salida de Turno" style="color: white;">Salida de Turno</a>
 </div>
             </div>
 
@@ -171,6 +171,7 @@ h4 {
     </div>
   </section>
 </div>
+
 
 
   <script>
